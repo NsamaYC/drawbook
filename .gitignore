@@ -1,0 +1,5 @@
+# Ignore media video and large photo directories
+*.mp4
+
+# Exclude book photo collection folders (offloaded to AWS S3)
+book*/

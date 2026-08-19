@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Drawbook - Digital Sketchbooks, Art Collections & Podcast Series.">
+  <title>Drawbook | Digital Sketchbook & Podcast Gallery</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Accessibility Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- App Header -->
+  <header class="app-header" role="banner">
+    <div class="header-inner">
+      <div class="logo-area">
+        <a href="#/" class="logo-link" aria-label="Drawbook Home">
+          <img src="drawbook_logo.png" alt="Drawbook Logo" class="brand-logo-img">
+          <span class="brand-name">DRAW<span>BOOK</span></span>
+        </a>
+      </div>
+
+      <!-- Quick Nav Controls -->
+      <nav class="header-nav" aria-label="Main Navigation">
+        <a href="#/" class="nav-btn" id="nav-index-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span>Books (64)</span>
+        </a>
+
+        <a href="#/podcasts" class="nav-btn" id="nav-podcasts-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+            <path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+          </svg>
+          <span>Podcasts (4)</span>
+        </a>
+
+        <!-- Jump to Book Selector -->
+        <div class="jump-selector-wrapper">
+          <select id="jump-to-book-select" aria-label="Jump directly to book">
+            <option value="">Jump to Book...</option>
+          </select>
+        </div>
+
+        <!-- S3 Media Settings Button -->
+        <button id="s3-config-btn" class="icon-btn" aria-label="AWS S3 Media Settings" title="Configure S3 Media Storage URL">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </button>
+
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark/light theme" title="Toggle Theme">
+          <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <circle cx="12" cy="12" r="5" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+          </svg>
+          <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main View Container -->
+  <main id="main-content" class="main-layout" role="main" tabindex="-1">
+    <!-- Dynamic SPA View Content loaded here -->
+  </main>
+
+  <!-- AWS S3 Storage Settings Modal -->
+  <div id="s3-modal" class="lightbox-backdrop hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="AWS S3 Storage Configuration">
+    <div class="s3-modal-card">
+      <div class="s3-modal-header">
+        <div class="s3-modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>AWS S3 Media Storage Settings</span>
+        </div>
+        <button id="s3-modal-close-btn" class="lightbox-close-btn" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="s3-modal-body">
+        <p class="s3-modal-desc">
+          Offload your >20 GB photo collection to AWS S3. Enter your public AWS S3 bucket or CloudFront distribution base URL below.
+        </p>
+
+        <div class="s3-form-group">
+          <label for="s3-url-input">S3 Media Base URL:</label>
+          <input type="url" id="s3-url-input" class="s3-input" placeholder="https://your-bucket-name.s3.us-east-1.amazonaws.com" spellcheck="false">
+          <span class="s3-help-text">Example: <code>https://my-drawbook-media.s3.amazonaws.com</code> or <code>https://d1234.cloudfront.net</code></span>
+        </div>
+
+        <div class="s3-status-box" id="s3-status-box">
+          <span id="s3-status-text">Status: Checking media host source...</span>
+        </div>
+      </div>
+
+      <div class="s3-modal-footer">
+        <button id="s3-reset-btn" class="btn-secondary">Use Local Path</button>
+        <button id="s3-save-btn" class="btn-primary">Save S3 Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal for Full-Resolution Page Preview -->
+  <div id="lightbox-modal" class="lightbox-backdrop hidden" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-label="Full-resolution image view">
+    <div class="lightbox-toolbar">
+      <div class="lightbox-info">
+        <span id="lightbox-page-title" class="lightbox-title">Book 14 - Page 115</span>
+        <span id="lightbox-filename" class="lightbox-filename">book14p115.jpg</span>
+      </div>
+      <div class="lightbox-actions">
+        <button id="lightbox-prev-btn" class="lightbox-nav-btn" aria-label="Previous Page"
+          title="Previous Page (Left Arrow)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <span id="lightbox-counter" class="lightbox-counter">1 / 15</span>
+        <button id="lightbox-next-btn" class="lightbox-nav-btn" aria-label="Next Page" title="Next Page (Right Arrow)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+        <div class="divider"></div>
+        <button id="lightbox-close-btn" class="lightbox-close-btn" aria-label="Close Preview" title="Close (Escape)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="lightbox-content">
+      <div class="lightbox-stage" id="lightbox-stage">
+        <!-- SVG or Canvas artwork rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-notification" class="toast-msg">Action notification</div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/canvas-renderer.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
