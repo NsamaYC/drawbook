@@ -685,6 +685,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (e.key === 'ArrowRight' && nextId && e.altKey) {
           window.Router.navigate(`/book/${nextId}`);
         }
+      }
     });
   }
 
