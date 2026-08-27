@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Virtualized Book Viewer
+   * Book Viewer Component
    */
   function renderBookViewer(book) {
     const { prevId, nextId } = window.BookStore.getAdjacentBookIds(book.id);
@@ -421,79 +421,66 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="gallery-grid ${state.viewMode === 'single' ? 'mode-single' : ''}" id="gallery-grid">
-          <!-- Virtualized cards mounted dynamically by VirtualGrid -->
+          ${book.pages.map((page, index) => `
+            <div class="page-card" data-page-index="${index}" tabindex="0" role="button" aria-label="Open full resolution preview for ${page.filename}">
+              <div class="page-placeholder-box" style="aspect-ratio: 3 / 4;">
+                ${window.PageRenderer.createPageSvg(book, page)}
+                <span class="page-filename-tag">${page.filename}</span>
+                <div class="page-fullres-overlay">
+                  <div class="zoom-icon-badge">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="page-card-footer">
+                <span class="page-label">Page ${page.index}</span>
+                <span class="page-res-badge">FULL-RES</span>
+              </div>
+            </div>
+          `).join('')}
         </div>
 
         ${renderNavBarMarkup('bottom')}
       </div>
     `;
 
-    const gridContainer = document.getElementById('gallery-grid');
     const gridBtn = document.getElementById('mode-grid-btn');
     const singleBtn = document.getElementById('mode-single-btn');
-
-    // Instantiate Virtual Grid for Book Pages
-    state.activeVirtualGrid = new window.VirtualGrid({
-      container: gridContainer,
-      items: book.pages,
-      viewMode: state.viewMode,
-      overscan: 3,
-      aspectRatio: 0.75, // 3:4
-      footerHeight: 44,
-      gap: 16,
-      renderItem: (page, index) => `
-        <div class="page-card" data-page-index="${index}" tabindex="0" role="button" aria-label="Open full resolution preview for ${page.filename}">
-          <div class="page-placeholder-box" style="aspect-ratio: 3 / 4; width: 100%; height: auto; position: relative;">
-            <div class="page-skeleton-placeholder">
-              <svg class="page-skeleton-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-              </svg>
-              <span class="page-skeleton-text">Page ${page.index}</span>
-            </div>
-            ${window.PageRenderer.createPageSvg(book, page)}
-            <span class="page-filename-tag">${page.filename}</span>
-            <div class="page-fullres-overlay">
-              <div class="zoom-icon-badge">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="page-card-footer">
-            <span class="page-label">Page ${page.index}</span>
-            <span class="page-res-badge">FULL-RES</span>
-          </div>
-        </div>
-      `,
-      onItemClick: (page, index) => {
-        state.lightboxContext = 'book';
-        openLightbox(index);
-      }
-    });
-
-    // Instantiate Precision Touch-Scrubber for mobile devices
-    state.activeTouchScrubber = new window.PrecisionTouchScrubber({
-      virtualGrid: state.activeVirtualGrid,
-      title: `${book.title}`,
-      items: book.pages
-    });
+    const galleryGrid = document.getElementById('gallery-grid');
 
     gridBtn.addEventListener('click', () => {
       state.viewMode = 'grid';
       gridBtn.classList.add('active');
       singleBtn.classList.remove('active');
-      gridContainer.classList.remove('mode-single');
-      state.activeVirtualGrid.setViewMode('grid');
+      galleryGrid.classList.remove('mode-single');
     });
 
     singleBtn.addEventListener('click', () => {
       state.viewMode = 'single';
       singleBtn.classList.add('active');
       gridBtn.classList.remove('active');
-      gridContainer.classList.add('mode-single');
-      state.activeVirtualGrid.setViewMode('single');
+      galleryGrid.classList.add('mode-single');
     });
+
+    const pageCards = document.querySelectorAll('.page-card');
+    pageCards.forEach(card => {
+      const openPage = () => {
+        state.lightboxContext = 'book';
+        const idx = parseInt(card.getAttribute('data-page-index'), 10);
+        openLightbox(idx);
+      };
+      card.addEventListener('click', openPage);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openPage();
+        }
+      });
+    });
+
+    initScrollObserver();
   }
 
   // =========================================================================
@@ -719,7 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Virtualized TAOC Batch Viewer with Precision Touch-Scrubber
+   * TAOC Batch Viewer Component
    */
   function renderTaocBatchViewer(batch) {
     const { prevId, nextId } = window.BookStore.getAdjacentTaocBatchIds(batch.id);
@@ -779,88 +766,75 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="gallery-grid ${state.viewMode === 'single' ? 'mode-single' : ''}" id="gallery-grid">
-          <!-- Virtualized cards mounted dynamically by VirtualGrid -->
+          ${batch.pages.map((page, index) => {
+            const isSold = page.status === 'sold';
+            const badgeClass = isSold ? 'taoc-sold-badge' : 'taoc-forsale-badge';
+            const badgeText = isSold ? 'SOLD' : 'FOR SALE';
+            const resolvedSrc = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(page.src) : page.src;
+
+            return `
+              <div class="page-card taoc-page-card ${isSold ? 'taoc-sold-card' : ''}" data-page-index="${index}" tabindex="0" role="button" aria-label="View ${page.filename}">
+                <div class="page-placeholder-box" style="aspect-ratio: 3 / 4;">
+                  <div class="page-img-wrapper">
+                    <img src="${resolvedSrc}" alt="TAOC Image ${page.imageNumber}" class="page-real-img" loading="lazy" onload="this.parentElement.classList.add('loaded')">
+                  </div>
+                  <span class="page-filename-tag">${page.filename}</span>
+                  <div class="page-fullres-overlay">
+                    <div class="zoom-icon-badge">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+                <div class="page-card-footer">
+                  <span class="page-label">#${page.imageNumber}</span>
+                  <span class="page-res-badge ${badgeClass}">${badgeText}</span>
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
 
         ${renderBatchNavMarkup('bottom')}
       </div>
     `;
 
-    const gridContainer = document.getElementById('gallery-grid');
     const gridBtn = document.getElementById('mode-grid-btn');
     const singleBtn = document.getElementById('mode-single-btn');
-
-    // Instantiate Virtual Grid for TAOC Batch (300 items)
-    state.activeVirtualGrid = new window.VirtualGrid({
-      container: gridContainer,
-      items: batch.pages,
-      viewMode: state.viewMode,
-      overscan: 3,
-      aspectRatio: 0.75, // 3:4
-      footerHeight: 44,
-      gap: 16,
-      renderItem: (page, index) => {
-        const isSold = page.status === 'sold';
-        const badgeClass = isSold ? 'taoc-sold-badge' : 'taoc-forsale-badge';
-        const badgeText = isSold ? 'SOLD' : 'FOR SALE';
-        const resolvedSrc = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(page.src) : page.src;
-
-        return `
-          <div class="page-card taoc-page-card ${isSold ? 'taoc-sold-card' : ''}" data-page-index="${index}" tabindex="0" role="button" aria-label="View ${page.filename}">
-            <div class="page-placeholder-box" style="aspect-ratio: 3 / 4; width: 100%; height: auto; position: relative;">
-              <div class="page-skeleton-placeholder">
-                <svg class="page-skeleton-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <span class="page-skeleton-text">#${page.imageNumber}</span>
-              </div>
-              <div class="page-img-wrapper">
-                <img src="${resolvedSrc}" alt="TAOC Image ${page.imageNumber}" class="page-real-img" loading="lazy" onload="this.parentElement.classList.add('loaded')">
-              </div>
-              <span class="page-filename-tag">${page.filename}</span>
-              <div class="page-fullres-overlay">
-                <div class="zoom-icon-badge">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-            <div class="page-card-footer">
-              <span class="page-label">#${page.imageNumber}</span>
-              <span class="page-res-badge ${badgeClass}">${badgeText}</span>
-            </div>
-          </div>
-        `;
-      },
-      onItemClick: (page, index) => {
-        state.lightboxContext = 'taoc';
-        openLightbox(index);
-      }
-    });
-
-    // Instantiate Precision Touch-Scrubber for mobile devices
-    state.activeTouchScrubber = new window.PrecisionTouchScrubber({
-      virtualGrid: state.activeVirtualGrid,
-      title: `TAOC — ${batch.title}`,
-      items: batch.pages
-    });
+    const galleryGrid = document.getElementById('gallery-grid');
 
     gridBtn.addEventListener('click', () => {
       state.viewMode = 'grid';
       gridBtn.classList.add('active');
       singleBtn.classList.remove('active');
-      gridContainer.classList.remove('mode-single');
-      state.activeVirtualGrid.setViewMode('grid');
+      galleryGrid.classList.remove('mode-single');
     });
 
     singleBtn.addEventListener('click', () => {
       state.viewMode = 'single';
       singleBtn.classList.add('active');
       gridBtn.classList.remove('active');
-      gridContainer.classList.add('mode-single');
-      state.activeVirtualGrid.setViewMode('single');
+      galleryGrid.classList.add('mode-single');
     });
+
+    const pageCards = document.querySelectorAll('.page-card');
+    pageCards.forEach(card => {
+      const openPage = () => {
+        state.lightboxContext = 'taoc';
+        const idx = parseInt(card.getAttribute('data-page-index'), 10);
+        openLightbox(idx);
+      };
+      card.addEventListener('click', openPage);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openPage();
+        }
+      });
+    });
+
+    initScrollObserver();
   }
 
   // =========================================================================
