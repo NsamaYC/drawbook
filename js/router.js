@@ -5,6 +5,8 @@
  * - Book Route: `/#/book/:id` (e.g. `/#/book/14`)
  * - Podcasts Hub: `/#/podcasts`
  * - Podcast Route: `/#/podcast/:id` or `/#/podcast/:slug` (e.g. `/#/podcast/1`)
+ * - TAOC Index: `/#/taoc`
+ * - TAOC Batch Route: `/#/taoc/:id` (e.g. `/#/taoc/3`)
  */
 
 window.Router = {
@@ -40,6 +42,26 @@ window.Router = {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
+    }
+
+    // Check for TAOC Batch Detail route pattern: `/taoc/:id`
+    const taocMatch = cleanHash.match(/^\/taoc\/(\d+)$/);
+    if (taocMatch) {
+      const batchId = parseInt(taocMatch[1], 10);
+      if (this.routes['/taoc/:id']) {
+        this.currentRoute = { path: '/taoc/:id', params: { id: batchId } };
+        this.routes['/taoc/:id'](batchId);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+
+    // Check for TAOC Index: `/taoc`
+    if (cleanHash === '/taoc' && this.routes['/taoc']) {
+      this.currentRoute = { path: '/taoc', params: {} };
+      this.routes['/taoc']();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
     // Check for Podcast Landing Page route pattern: `/podcast/:id`

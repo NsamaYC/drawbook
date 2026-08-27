@@ -1,6 +1,7 @@
 /**
  * LuminaVault Application Controller
- * Handles rendering for Books, Book Viewer, Podcasts Hub, Modular Podcast Landing Pages,
+ * Handles rendering for Books, Virtualized Book Viewer, Podcasts Hub, Modular Podcast Landing Pages,
+ * Virtualized TAOC (The Art of Ceilings) Gallery with Mobile Precision Touch-Scrubber,
  * theme toggling, search, jump select, and interactive toasts.
  */
 
@@ -9,12 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const state = {
     books: window.BookStore.getAllBooks(),
     podcasts: window.BookStore.getAllPodcasts(),
+    taocBatches: window.BookStore.getAllTaocBatches(),
     currentBook: null,
     currentPodcast: null,
+    currentTaocBatch: null,
     currentLightboxIndex: 0,
+    lightboxContext: 'book', // 'book' or 'taoc'
     searchQuery: '',
     selectedGenre: 'ALL',
-    viewMode: 'grid'
+    viewMode: 'grid',
+    activeVirtualGrid: null,
+    activeTouchScrubber: null
   };
 
   // DOM Elements
@@ -23,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggleBtn = document.getElementById('theme-toggle');
   const navIndexBtn = document.getElementById('nav-index-btn');
   const navPodcastsBtn = document.getElementById('nav-podcasts-btn');
+  const navTaocBtn = document.getElementById('nav-taoc-btn');
 
   const lightboxModal = document.getElementById('lightbox-modal');
   const lightboxStage = document.getElementById('lightbox-stage');
@@ -41,6 +48,20 @@ document.addEventListener('DOMContentLoaded', () => {
   initLightboxListeners();
   initS3ConfigModal();
   initRouter();
+
+  /**
+   * Clean up active virtualizers & scrubbers on route/view change
+   */
+  function cleanupActiveControllers() {
+    if (state.activeVirtualGrid) {
+      state.activeVirtualGrid.destroy();
+      state.activeVirtualGrid = null;
+    }
+    if (state.activeTouchScrubber) {
+      state.activeTouchScrubber.destroy();
+      state.activeTouchScrubber = null;
+    }
+  }
 
   /**
    * Populate Jump to Book selector
@@ -103,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { threshold: 0.05, rootMargin: '0px 0px 40px 0px' });
 
-    document.querySelectorAll('.book-card, .page-card, .podcast-hub-card, .episode-card').forEach((el, idx) => {
+    document.querySelectorAll('.book-card, .podcast-hub-card, .episode-card, .taoc-batch-card').forEach((el, idx) => {
       el.classList.add('reveal-on-scroll');
       el.style.animationDelay = `${(idx % 12) * 0.04}s`;
       observer.observe(el);
@@ -128,15 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
   function initRouter() {
     // Route 1: Library Index Page (Books)
     window.Router.register('/', () => {
+      cleanupActiveControllers();
       document.title = 'Drawbook | Digital Sketchbook Gallery';
       state.currentBook = null;
       state.currentPodcast = null;
+      state.currentTaocBatch = null;
       updateActiveNav('books');
       renderLibraryIndex();
     });
 
-    // Route 2: Book Viewer Component
+    // Route 2: Virtualized Book Viewer Component
     window.Router.register('/book/:id', (bookId) => {
+      cleanupActiveControllers();
       const book = window.BookStore.getBookById(bookId);
       if (!book || book.isMissing) {
         if (book && book.isMissing) {
@@ -147,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       state.currentBook = book;
       state.currentPodcast = null;
+      state.currentTaocBatch = null;
       updateActiveNav('books');
       document.title = `${book.title} - Drawbook`;
       renderBookViewer(book);
@@ -154,15 +179,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Route 3: Podcasts Mainpage Hub
     window.Router.register('/podcasts', () => {
+      cleanupActiveControllers();
       document.title = 'Drawbook | Audio Podcasts';
       state.currentBook = null;
       state.currentPodcast = null;
+      state.currentTaocBatch = null;
       updateActiveNav('podcasts');
       renderPodcastsHub();
     });
 
     // Route 4: Modular Podcast Landing Page Template
     window.Router.register('/podcast/:id', (param) => {
+      cleanupActiveControllers();
       let podcast = window.BookStore.getPodcastById(param);
       if (!podcast) {
         podcast = window.BookStore.getPodcastBySlug(param);
@@ -173,21 +201,53 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       state.currentPodcast = podcast;
       state.currentBook = null;
+      state.currentTaocBatch = null;
       updateActiveNav('podcasts');
       document.title = `${podcast.podcastName} - Podcast Series`;
       renderPodcastLandingPage(podcast);
+    });
+
+    // Route 5: TAOC Index (Batch Grid)
+    window.Router.register('/taoc', () => {
+      cleanupActiveControllers();
+      document.title = 'Drawbook | The Art of Ceilings';
+      state.currentBook = null;
+      state.currentPodcast = null;
+      state.currentTaocBatch = null;
+      updateActiveNav('taoc');
+      renderTaocIndex();
+    });
+
+    // Route 6: Virtualized TAOC Batch Viewer with Precision Touch-Scrubber
+    window.Router.register('/taoc/:id', (batchId) => {
+      cleanupActiveControllers();
+      const batch = window.BookStore.getTaocBatchById(batchId);
+      if (!batch) {
+        window.Router.navigate('/taoc');
+        return;
+      }
+      state.currentTaocBatch = batch;
+      state.currentBook = null;
+      state.currentPodcast = null;
+      updateActiveNav('taoc');
+      document.title = `TAOC ${batch.title} — The Art of Ceilings`;
+      renderTaocBatchViewer(batch);
     });
 
     window.Router.init();
   }
 
   function updateActiveNav(type) {
+    navIndexBtn.classList.remove('active');
+    navPodcastsBtn.classList.remove('active');
+    if (navTaocBtn) navTaocBtn.classList.remove('active');
+
     if (type === 'books') {
       navIndexBtn.classList.add('active');
-      navPodcastsBtn.classList.remove('active');
-    } else {
+    } else if (type === 'podcasts') {
       navPodcastsBtn.classList.add('active');
-      navIndexBtn.classList.remove('active');
+    } else if (type === 'taoc') {
+      if (navTaocBtn) navTaocBtn.classList.add('active');
     }
   }
 
@@ -300,6 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollObserver();
   }
 
+  /**
+   * Virtualized Book Viewer
+   */
   function renderBookViewer(book) {
     const { prevId, nextId } = window.BookStore.getAdjacentBookIds(book.id);
 
@@ -358,65 +421,79 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div class="gallery-grid ${state.viewMode === 'single' ? 'mode-single' : ''}" id="gallery-grid">
-          ${book.pages.map((page, index) => `
-            <div class="page-card" data-page-index="${index}" tabindex="0" role="button" aria-label="Open full resolution preview for ${page.filename}">
-              <div class="page-placeholder-box" style="aspect-ratio: 3 / 4;">
-                ${window.PageRenderer.createPageSvg(book, page)}
-                <span class="page-filename-tag">${page.filename}</span>
-                <div class="page-fullres-overlay">
-                  <div class="zoom-icon-badge">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                      <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-              <div class="page-card-footer">
-                <span class="page-label">Page ${page.index}</span>
-                <span class="page-res-badge">FULL-RES</span>
-              </div>
-            </div>
-          `).join('')}
+          <!-- Virtualized cards mounted dynamically by VirtualGrid -->
         </div>
 
         ${renderNavBarMarkup('bottom')}
       </div>
     `;
 
+    const gridContainer = document.getElementById('gallery-grid');
     const gridBtn = document.getElementById('mode-grid-btn');
     const singleBtn = document.getElementById('mode-single-btn');
-    const galleryGrid = document.getElementById('gallery-grid');
+
+    // Instantiate Virtual Grid for Book Pages
+    state.activeVirtualGrid = new window.VirtualGrid({
+      container: gridContainer,
+      items: book.pages,
+      viewMode: state.viewMode,
+      overscan: 3,
+      aspectRatio: 0.75, // 3:4
+      footerHeight: 44,
+      gap: 16,
+      renderItem: (page, index) => `
+        <div class="page-card" data-page-index="${index}" tabindex="0" role="button" aria-label="Open full resolution preview for ${page.filename}">
+          <div class="page-placeholder-box" style="aspect-ratio: 3 / 4; width: 100%; height: auto; position: relative;">
+            <div class="page-skeleton-placeholder">
+              <svg class="page-skeleton-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span class="page-skeleton-text">Page ${page.index}</span>
+            </div>
+            ${window.PageRenderer.createPageSvg(book, page)}
+            <span class="page-filename-tag">${page.filename}</span>
+            <div class="page-fullres-overlay">
+              <div class="zoom-icon-badge">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="page-card-footer">
+            <span class="page-label">Page ${page.index}</span>
+            <span class="page-res-badge">FULL-RES</span>
+          </div>
+        </div>
+      `,
+      onItemClick: (page, index) => {
+        state.lightboxContext = 'book';
+        openLightbox(index);
+      }
+    });
+
+    // Instantiate Precision Touch-Scrubber for mobile devices
+    state.activeTouchScrubber = new window.PrecisionTouchScrubber({
+      virtualGrid: state.activeVirtualGrid,
+      title: `${book.title}`,
+      items: book.pages
+    });
 
     gridBtn.addEventListener('click', () => {
       state.viewMode = 'grid';
       gridBtn.classList.add('active');
       singleBtn.classList.remove('active');
-      galleryGrid.classList.remove('mode-single');
+      gridContainer.classList.remove('mode-single');
+      state.activeVirtualGrid.setViewMode('grid');
     });
 
     singleBtn.addEventListener('click', () => {
       state.viewMode = 'single';
       singleBtn.classList.add('active');
       gridBtn.classList.remove('active');
-      galleryGrid.classList.add('mode-single');
+      gridContainer.classList.add('mode-single');
+      state.activeVirtualGrid.setViewMode('single');
     });
-
-    const pageCards = document.querySelectorAll('.page-card');
-    pageCards.forEach(card => {
-      const openPage = () => {
-        const idx = parseInt(card.getAttribute('data-page-index'), 10);
-        openLightbox(idx);
-      };
-      card.addEventListener('click', openPage);
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openPage();
-        }
-      });
-    });
-
-    initScrollObserver();
   }
 
   // =========================================================================
@@ -459,8 +536,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // =========================================================================
   // MODULAR PODCAST LANDING PAGE TEMPLATE
-  // Reads podcast configuration object dynamically.
-  // Host: Sean Penalber. Episodes: Clean title and audio player without episode numbers/descriptions.
   // =========================================================================
 
   function renderPodcastLandingPage(data) {
@@ -469,12 +544,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         <!-- Column 1 (Sidebar / Vibe) -->
         <aside class="podcast-sidebar">
-          <!-- Cover Art Image / SVG -->
           <div class="podcast-cover-container">
             ${window.PageRenderer.createPodcastCoverSvg(data)}
           </div>
 
-          <!-- Podcast Metadata -->
           <div class="podcast-sidebar-info">
             <h2 class="podcast-sidebar-title">${escapeHtml(data.podcastName)}</h2>
             <div class="podcast-host-byline">
@@ -488,7 +561,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="podcast-description">${escapeHtml(data.description)}</p>
           </div>
 
-          <!-- Prominent Listen on Spotify Button -->
           ${data.spotifyDirectLink ? `
             <a href="${escapeHtml(data.spotifyDirectLink)}" target="_blank" rel="noopener" class="spotify-btn">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
@@ -498,7 +570,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
           ` : ''}
 
-          <!-- Stream Us Section -->
           <div class="podcast-sidebar-section">
             <h3 class="sidebar-section-title">Stream Us</h3>
             <ul class="stream-links-list">
@@ -513,7 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </ul>
           </div>
 
-          <!-- Support Us Section -->
           <div class="podcast-sidebar-section">
             <h3 class="sidebar-section-title">Support Us</h3>
             <div class="support-logos-grid">
@@ -534,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="feed-count">${data.episodes.length} Episodes</span>
           </div>
 
-          <!-- Vertical Feed of Clean Episode Cards (No Episode Numbers or Details) -->
           <div class="episodes-feed-list">
             ${data.episodes.map(ep => `
               <article class="episode-card" id="ep-${ep.id}">
@@ -552,7 +621,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                 </div>
 
-                <!-- HTML5 Audio Controls Player -->
                 <div class="audio-player-wrapper">
                   <audio controls preload="metadata">
                     <source src="${escapeHtml(ep.audioUrl)}" type="audio/mpeg">
@@ -560,7 +628,6 @@ document.addEventListener('DOMContentLoaded', () => {
                   </audio>
                 </div>
 
-                <!-- Action Buttons: Share, RSS, Download -->
                 <div class="episode-actions-row">
                   <button class="episode-action-btn action-share-btn" data-ep-title="${escapeHtml(ep.title)}">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
@@ -584,7 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
 
-    // Attach Share & RSS button listeners
     const shareBtns = document.querySelectorAll('.action-share-btn');
     shareBtns.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -609,11 +675,201 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
+  // RENDERERS: TAOC (The Art of Ceilings)
+  // =========================================================================
+
+  /**
+   * TAOC Index Page — Grid of batch cards
+   */
+  function renderTaocIndex() {
+    const batches = state.taocBatches;
+    const totalImages = batches.reduce((sum, b) => sum + b.imageCount, 0);
+
+    mainContent.innerHTML = `
+      <section class="library-hero taoc-hero">
+        <h1 class="library-title">The Art of Ceilings</h1>
+        <p class="library-subtitle">${totalImages.toLocaleString()} photographs of architectural ceilings, organized into ${batches.length} batches of up to 300 images each.</p>
+      </section>
+
+      <div class="taoc-batches-grid">
+        ${batches.map(batch => {
+          const coverSrc = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(batch.coverSrc) : batch.coverSrc;
+          return `
+            <a href="#/taoc/${batch.id}" class="taoc-batch-card" aria-label="Open ${batch.title} — Images ${batch.startIndex} to ${batch.endIndex}">
+              <div class="taoc-batch-cover-wrap">
+                <img src="${coverSrc}" alt="The Art of Ceilings — ${batch.title}" class="taoc-batch-cover-img" loading="lazy">
+                <div class="taoc-batch-cover-overlay">
+                  <span class="taoc-batch-number">Batch ${batch.batchNumber}</span>
+                </div>
+              </div>
+              <div class="taoc-batch-info">
+                <h2 class="taoc-batch-title">${batch.title}</h2>
+                <div class="taoc-batch-meta">
+                  <span>Images ${batch.startIndex}–${batch.endIndex}</span>
+                  <span>${batch.imageCount} Photos</span>
+                </div>
+              </div>
+            </a>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    initScrollObserver();
+  }
+
+  /**
+   * Virtualized TAOC Batch Viewer with Precision Touch-Scrubber
+   */
+  function renderTaocBatchViewer(batch) {
+    const { prevId, nextId } = window.BookStore.getAdjacentTaocBatchIds(batch.id);
+
+    const renderBatchNavMarkup = (position) => `
+      <nav class="book-nav-bar taoc-nav-bar" aria-label="Batch navigation ${position}">
+        ${prevId ? `
+          <a href="#/taoc/${prevId}" class="book-nav-btn" aria-label="Go to Batch ${prevId}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Previous Batch</span>
+          </a>
+        ` : `
+          <button class="book-nav-btn disabled" aria-disabled="true" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            <span>Previous Batch</span>
+          </button>
+        `}
+
+        <div class="book-nav-center">
+          <h1 class="book-header-title">TAOC — ${batch.title}</h1>
+          <span class="book-header-subtitle">Images ${batch.startIndex}–${batch.endIndex} • ${batch.imageCount} Photographs</span>
+        </div>
+
+        ${nextId ? `
+          <a href="#/taoc/${nextId}" class="book-nav-btn" aria-label="Go to Batch ${nextId}">
+            <span>Next Batch</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        ` : `
+          <button class="book-nav-btn disabled" aria-disabled="true" disabled>
+            <span>Next Batch</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        `}
+      </nav>
+    `;
+
+    mainContent.innerHTML = `
+      <div class="book-viewer-container taoc-viewer-container">
+        ${renderBatchNavMarkup('top')}
+
+        <div class="viewer-toolbar">
+          <div>
+            <strong>Showing:</strong> 
+            <code>${batch.pages[0].rawName}</code> — <code>${batch.pages[batch.pages.length - 1].rawName}</code>
+          </div>
+          <div class="view-mode-toggle">
+            <button class="view-mode-btn ${state.viewMode === 'grid' ? 'active' : ''}" id="mode-grid-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Grid View (4 / 2 Col)
+            </button>
+            <button class="view-mode-btn ${state.viewMode === 'single' ? 'active' : ''}" id="mode-single-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/></svg>
+              Single Column
+            </button>
+          </div>
+        </div>
+
+        <div class="gallery-grid ${state.viewMode === 'single' ? 'mode-single' : ''}" id="gallery-grid">
+          <!-- Virtualized cards mounted dynamically by VirtualGrid -->
+        </div>
+
+        ${renderBatchNavMarkup('bottom')}
+      </div>
+    `;
+
+    const gridContainer = document.getElementById('gallery-grid');
+    const gridBtn = document.getElementById('mode-grid-btn');
+    const singleBtn = document.getElementById('mode-single-btn');
+
+    // Instantiate Virtual Grid for TAOC Batch (300 items)
+    state.activeVirtualGrid = new window.VirtualGrid({
+      container: gridContainer,
+      items: batch.pages,
+      viewMode: state.viewMode,
+      overscan: 3,
+      aspectRatio: 0.75, // 3:4
+      footerHeight: 44,
+      gap: 16,
+      renderItem: (page, index) => {
+        const isSold = page.status === 'sold';
+        const badgeClass = isSold ? 'taoc-sold-badge' : 'taoc-forsale-badge';
+        const badgeText = isSold ? 'SOLD' : 'FOR SALE';
+        const resolvedSrc = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(page.src) : page.src;
+
+        return `
+          <div class="page-card taoc-page-card ${isSold ? 'taoc-sold-card' : ''}" data-page-index="${index}" tabindex="0" role="button" aria-label="View ${page.filename}">
+            <div class="page-placeholder-box" style="aspect-ratio: 3 / 4; width: 100%; height: auto; position: relative;">
+              <div class="page-skeleton-placeholder">
+                <svg class="page-skeleton-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span class="page-skeleton-text">#${page.imageNumber}</span>
+              </div>
+              <div class="page-img-wrapper">
+                <img src="${resolvedSrc}" alt="TAOC Image ${page.imageNumber}" class="page-real-img" loading="lazy" onload="this.parentElement.classList.add('loaded')">
+              </div>
+              <span class="page-filename-tag">${page.filename}</span>
+              <div class="page-fullres-overlay">
+                <div class="zoom-icon-badge">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <div class="page-card-footer">
+              <span class="page-label">#${page.imageNumber}</span>
+              <span class="page-res-badge ${badgeClass}">${badgeText}</span>
+            </div>
+          </div>
+        `;
+      },
+      onItemClick: (page, index) => {
+        state.lightboxContext = 'taoc';
+        openLightbox(index);
+      }
+    });
+
+    // Instantiate Precision Touch-Scrubber for mobile devices
+    state.activeTouchScrubber = new window.PrecisionTouchScrubber({
+      virtualGrid: state.activeVirtualGrid,
+      title: `TAOC — ${batch.title}`,
+      items: batch.pages
+    });
+
+    gridBtn.addEventListener('click', () => {
+      state.viewMode = 'grid';
+      gridBtn.classList.add('active');
+      singleBtn.classList.remove('active');
+      gridContainer.classList.remove('mode-single');
+      state.activeVirtualGrid.setViewMode('grid');
+    });
+
+    singleBtn.addEventListener('click', () => {
+      state.viewMode = 'single';
+      singleBtn.classList.add('active');
+      gridBtn.classList.remove('active');
+      gridContainer.classList.add('mode-single');
+      state.activeVirtualGrid.setViewMode('single');
+    });
+  }
+
+  // =========================================================================
   // LIGHTBOX MODAL LOGIC
   // =========================================================================
 
   function openLightbox(pageIndex) {
-    if (!state.currentBook) return;
+    if (state.lightboxContext === 'book' && !state.currentBook) return;
+    if (state.lightboxContext === 'taoc' && !state.currentTaocBatch) return;
     state.currentLightboxIndex = pageIndex;
     updateLightboxContent();
     lightboxModal.classList.remove('hidden');
@@ -628,6 +884,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateLightboxContent() {
+    if (state.lightboxContext === 'taoc') {
+      updateTaocLightboxContent();
+      return;
+    }
+
     const book = state.currentBook;
     if (!book) return;
     const page = book.pages[state.currentLightboxIndex];
@@ -642,15 +903,39 @@ document.addEventListener('DOMContentLoaded', () => {
     lightboxNextBtn.disabled = state.currentLightboxIndex === book.pages.length - 1;
   }
 
+  function updateTaocLightboxContent() {
+    const batch = state.currentTaocBatch;
+    if (!batch) return;
+    const page = batch.pages[state.currentLightboxIndex];
+    const resolvedSrc = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(page.src) : page.src;
+
+    lightboxPageTitle.textContent = `TAOC — Image #${page.imageNumber} (${batch.title})`;
+    lightboxFilename.textContent = page.filename;
+    lightboxCounter.textContent = `${page.index} / ${batch.imageCount}`;
+
+    lightboxStage.innerHTML = `
+      <div class="page-img-wrapper">
+        <img src="${resolvedSrc}" alt="TAOC Image ${page.imageNumber}" class="page-real-img fullres-img" loading="lazy" onload="this.parentElement.classList.add('loaded')">
+      </div>
+    `;
+
+    lightboxPrevBtn.disabled = state.currentLightboxIndex === 0;
+    lightboxNextBtn.disabled = state.currentLightboxIndex === batch.pages.length - 1;
+  }
+
   function nextLightboxPage() {
-    if (state.currentBook && state.currentLightboxIndex < state.currentBook.pages.length - 1) {
+    const pages = state.lightboxContext === 'taoc'
+      ? (state.currentTaocBatch ? state.currentTaocBatch.pages : [])
+      : (state.currentBook ? state.currentBook.pages : []);
+
+    if (state.currentLightboxIndex < pages.length - 1) {
       state.currentLightboxIndex++;
       updateLightboxContent();
     }
   }
 
   function prevLightboxPage() {
-    if (state.currentBook && state.currentLightboxIndex > 0) {
+    if (state.currentLightboxIndex > 0) {
       state.currentLightboxIndex--;
       updateLightboxContent();
     }
@@ -684,6 +969,13 @@ document.addEventListener('DOMContentLoaded', () => {
           window.Router.navigate(`/book/${prevId}`);
         } else if (e.key === 'ArrowRight' && nextId && e.altKey) {
           window.Router.navigate(`/book/${nextId}`);
+        }
+      } else if (state.currentTaocBatch) {
+        const { prevId, nextId } = window.BookStore.getAdjacentTaocBatchIds(state.currentTaocBatch.id);
+        if (e.key === 'ArrowLeft' && prevId && e.altKey) {
+          window.Router.navigate(`/taoc/${prevId}`);
+        } else if (e.key === 'ArrowRight' && nextId && e.altKey) {
+          window.Router.navigate(`/taoc/${nextId}`);
         }
       }
     });
@@ -753,7 +1045,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateModalStatus();
       closeS3Modal();
-      // Re-render active view
       window.Router.handleRoute();
     });
 

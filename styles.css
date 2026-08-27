@@ -1781,3 +1781,478 @@ body {
   color: var(--text-primary);
 }
 
+/* ==========================================================================
+   TAOC (THE ART OF CEILINGS) GALLERY
+   ========================================================================== */
+
+/* TAOC Hero Section */
+.taoc-hero {
+  text-align: center;
+}
+
+/* TAOC Batch Index Grid */
+.taoc-batches-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0 1rem 3rem;
+}
+
+/* TAOC Batch Card */
+.taoc-batch-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.taoc-batch-card:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
+
+.taoc-batch-cover-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.taoc-batch-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-normal);
+}
+
+.taoc-batch-card:hover .taoc-batch-cover-img {
+  transform: scale(1.05);
+}
+
+.taoc-batch-cover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  padding: 2rem 1rem 0.8rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.taoc-batch-number {
+  background: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+}
+
+.taoc-batch-info {
+  padding: 1rem;
+}
+
+.taoc-batch-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+}
+
+.taoc-batch-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* TAOC Batch Viewer */
+.taoc-viewer-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.taoc-nav-bar {
+  /* inherits .book-nav-bar styles */
+}
+
+/* TAOC Page Card adjustments */
+.taoc-page-card {
+  /* inherits .page-card styles */
+}
+
+/* FOR SALE Badge — Green */
+.taoc-forsale-badge {
+  font-size: 0.7rem;
+  color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* SOLD Badge — Amber/Red */
+.taoc-sold-badge {
+  font-size: 0.7rem;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Sold card slight opacity */
+.taoc-sold-card {
+  opacity: 0.7;
+}
+
+.taoc-sold-card:hover {
+  opacity: 0.85;
+}
+
+/* Responsive adjustments for TAOC */
+@media (max-width: 768px) {
+  .taoc-batches-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    padding: 0 0.75rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .taoc-batches-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   WINDOW VIRTUALIZATION GRID STYLES
+   ========================================================================== */
+
+.virtual-grid-container {
+  width: 100%;
+  position: relative;
+  touch-action: pan-y;
+  contain: layout style;
+}
+
+.virtual-grid-spacer {
+  position: relative;
+  width: 100%;
+}
+
+.virtual-grid-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: auto;
+}
+
+.virtual-grid-content .page-card {
+  margin: 0;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+/* Skeleton Loading & Shimmer for Rapid Scrubbing */
+.page-skeleton-placeholder {
+  position: absolute;
+  inset: 0;
+  background: var(--placeholder-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.page-skeleton-placeholder::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: skeletonShimmer 1.4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] .page-skeleton-placeholder::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 100%
+  );
+}
+
+@keyframes skeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.page-skeleton-icon {
+  width: 36px;
+  height: 36px;
+  opacity: 0.25;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.page-skeleton-text {
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* ==========================================================================
+   MOBILE PRECISION TOUCH-SCRUBBER (iOS Trackpad Mode for Vertical Galleries)
+   ========================================================================== */
+
+/* Body state when scrubbing is active - disables native scroll hijacking */
+body.precision-scrubbing-active {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  touch-action: none !important;
+  overflow: hidden !important;
+}
+
+.precision-scrubbing-active .virtual-grid-container {
+  touch-action: none !important;
+}
+
+/* Default: Scrubber is hidden on standard desktop/mouse devices */
+.precision-scrubber-container {
+  display: none;
+}
+
+/* Mobile & Touch Devices Only */
+@media (hover: none) and (pointer: coarse), (max-width: 1024px) {
+  .precision-scrubber-container {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 950;
+  }
+
+  /* Scrubber Track on Right Edge */
+  .precision-scrubber-track {
+    position: fixed;
+    right: 4px;
+    top: 14vh;
+    height: 72vh;
+    width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    touch-action: none;
+    cursor: grab;
+    z-index: 951;
+  }
+
+  .precision-scrubber-track:active {
+    cursor: grabbing;
+  }
+
+  /* Track Line */
+  .precision-scrubber-track-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 17px;
+    width: 4px;
+    border-radius: 4px;
+    background: rgba(120, 120, 130, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: width var(--transition-fast), background var(--transition-fast);
+  }
+
+  .precision-scrubber-container.active .precision-scrubber-track-line {
+    width: 6px;
+    background: var(--accent-primary);
+  }
+
+  /* Pill-shaped Handle / Thumb */
+  .precision-scrubber-thumb {
+    position: absolute;
+    top: 0;
+    right: 3px;
+    width: 32px;
+    height: 48px;
+    border-radius: 24px;
+    background: var(--bg-surface);
+    border: 1.5px solid var(--border-color);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    will-change: transform;
+    transition: transform 0.04s linear, width 0.15s ease, background 0.15s ease;
+  }
+
+  .precision-scrubber-container.active .precision-scrubber-thumb {
+    width: 36px;
+    height: 52px;
+    border-color: var(--accent-primary);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+    background: var(--bg-primary);
+  }
+
+  /* 3 Grip Lines inside thumb */
+  .scrubber-thumb-handle {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scrubber-thumb-handle span {
+    width: 14px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text-muted);
+    transition: background var(--transition-fast);
+  }
+
+  .precision-scrubber-container.active .scrubber-thumb-handle span {
+    background: var(--accent-primary);
+  }
+
+  /* Floating Precision HUD Indicator / Magnifier */
+  .precision-hud-indicator {
+    position: fixed;
+    right: 52px;
+    top: 0;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(12px, 0, 0) scale(0.9);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+    z-index: 952;
+  }
+
+  .precision-scrubber-container.active .precision-hud-indicator {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  /* HUD Card Content */
+  .precision-hud-card {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+    min-width: 170px;
+    max-width: 220px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-left: 3px solid var(--accent-primary);
+  }
+
+  .precision-hud-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+  }
+
+  .precision-hud-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .precision-hud-pct {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent-primary);
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  [data-theme="dark"] .precision-hud-pct {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .precision-hud-main {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 0.3rem;
+  }
+
+  .precision-hud-index {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .precision-hud-total {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .precision-hud-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 0.35rem;
+  }
+
+  .precision-hud-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .precision-hud-filename {
+    font-size: 0.7rem;
+    font-family: monospace;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

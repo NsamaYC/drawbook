@@ -1,4 +1,4 @@
-﻿/**
+/**
  * LuminaVault Data Layer
  * Contains exact image mappings for 64 Books (Books 1-64)
  * and 4 Podcasts hosted by Sean Penalber.
@@ -206221,10 +206221,146 @@ function generatePodcastsData() {
   ];
 }
 
+/**
+ * The Art of Ceilings (TAOC) Data Generator
+ * 3,424 images split into batches of 300 each.
+ * Each image has a sale status: "for_sale" or "sold".
+ */
+function generateTaocData() {
+  const TOTAL_IMAGES = 3424;
+  const BATCH_SIZE = 300;
+  const totalBatches = Math.ceil(TOTAL_IMAGES / BATCH_SIZE);
+
+  const TAOC_PALETTES = [
+    { primary: "#d4a574", secondary: "#b8860b", accent: "#f5deb3", name: "Golden Ceiling" },
+    { primary: "#8b7355", secondary: "#6b5b3e", accent: "#d2b48c", name: "Amber Vault" },
+    { primary: "#cd853f", secondary: "#a0522d", accent: "#ffe4b5", name: "Bronze Dome" },
+    { primary: "#bc8f8f", secondary: "#a0706e", accent: "#e8d0d0", name: "Rose Marble" },
+    { primary: "#9aad6c", secondary: "#6b8e23", accent: "#d4e4a0", name: "Verdigris Hall" },
+    { primary: "#6a8caf", secondary: "#4a6c8f", accent: "#b0cde0", name: "Azure Rotunda" },
+    { primary: "#9b7cb8", secondary: "#7b5c98", accent: "#d4b8e8", name: "Amethyst Chapel" },
+    { primary: "#c4956a", secondary: "#a0764a", accent: "#e8d0a8", name: "Terracotta Nave" },
+    { primary: "#7ba098", secondary: "#5b8078", accent: "#b0d4cc", name: "Patina Arch" },
+    { primary: "#b89070", secondary: "#987050", accent: "#e0c4a8", name: "Sandstone Apse" },
+    { primary: "#8e8670", secondary: "#6e6650", accent: "#c8c0a8", name: "Limestone Crypt" },
+    { primary: "#a89060", secondary: "#887040", accent: "#d8c898", name: "Gilded Fresco" }
+  ];
+
+  const batches = [];
+
+  for (let b = 0; b < totalBatches; b++) {
+    const startIdx = b * BATCH_SIZE + 1;
+    const endIdx = Math.min((b + 1) * BATCH_SIZE, TOTAL_IMAGES);
+    const imageCount = endIdx - startIdx + 1;
+    const batchNum = b + 1;
+
+    const pages = [];
+    for (let i = startIdx; i <= endIdx; i++) {
+      const paddedNum = String(i).padStart(4, '0');
+      const filename = `TAOC-${paddedNum}.jpg`;
+      pages.push({
+        index: i - startIdx + 1,
+        imageNumber: i,
+        filename: filename,
+        rawName: `TAOC-${paddedNum}`,
+        aspectRatio: "3/4",
+        src: `theartofceilings/${filename}`,
+        title: `Image ${i}`,
+        status: "for_sale"
+      });
+    }
+
+    batches.push({
+      id: batchNum,
+      title: `Batch ${batchNum}`,
+      slug: `taoc-batch-${batchNum}`,
+      batchNumber: batchNum,
+      imageCount: imageCount,
+      startIndex: startIdx,
+      endIndex: endIdx,
+      palette: TAOC_PALETTES[b % TAOC_PALETTES.length],
+      coverSrc: "taoc card.png",
+      summary: `The Art of Ceilings — Images ${startIdx} through ${endIdx} (${imageCount} photographs).`,
+      pages: pages
+    });
+  }
+
+  return batches;
+}
+
+
+/**
+ * The Art of Ceilings (TAOC) Data Generator
+ * 3,424 images split into batches of 300 each.
+ * Each image has a sale status: "for_sale" or "sold".
+ */
+function generateTaocData() {
+  var TOTAL_IMAGES = 3424;
+  var BATCH_SIZE = 300;
+  var totalBatches = Math.ceil(TOTAL_IMAGES / BATCH_SIZE);
+
+  var TAOC_PALETTES = [
+    { primary: "#d4a574", secondary: "#b8860b", accent: "#f5deb3", name: "Golden Ceiling" },
+    { primary: "#8b7355", secondary: "#6b5b3e", accent: "#d2b48c", name: "Amber Vault" },
+    { primary: "#cd853f", secondary: "#a0522d", accent: "#ffe4b5", name: "Bronze Dome" },
+    { primary: "#bc8f8f", secondary: "#a0706e", accent: "#e8d0d0", name: "Rose Marble" },
+    { primary: "#9aad6c", secondary: "#6b8e23", accent: "#d4e4a0", name: "Verdigris Hall" },
+    { primary: "#6a8caf", secondary: "#4a6c8f", accent: "#b0cde0", name: "Azure Rotunda" },
+    { primary: "#9b7cb8", secondary: "#7b5c98", accent: "#d4b8e8", name: "Amethyst Chapel" },
+    { primary: "#c4956a", secondary: "#a0764a", accent: "#e8d0a8", name: "Terracotta Nave" },
+    { primary: "#7ba098", secondary: "#5b8078", accent: "#b0d4cc", name: "Patina Arch" },
+    { primary: "#b89070", secondary: "#987050", accent: "#e0c4a8", name: "Sandstone Apse" },
+    { primary: "#8e8670", secondary: "#6e6650", accent: "#c8c0a8", name: "Limestone Crypt" },
+    { primary: "#a89060", secondary: "#887040", accent: "#d8c898", name: "Gilded Fresco" }
+  ];
+
+  var batches = [];
+
+  for (var b = 0; b < totalBatches; b++) {
+    var startIdx = b * BATCH_SIZE + 1;
+    var endIdx = Math.min((b + 1) * BATCH_SIZE, TOTAL_IMAGES);
+    var imageCount = endIdx - startIdx + 1;
+    var batchNum = b + 1;
+
+    var pages = [];
+    for (var i = startIdx; i <= endIdx; i++) {
+      var paddedNum = String(i).padStart(4, '0');
+      var filename = 'TAOC-' + paddedNum + '.jpg';
+      pages.push({
+        index: i - startIdx + 1,
+        imageNumber: i,
+        filename: filename,
+        rawName: 'TAOC-' + paddedNum,
+        aspectRatio: "3/4",
+        src: 'theartofceilings/' + filename,
+        title: 'Image ' + i,
+        status: "for_sale"
+      });
+    }
+
+    batches.push({
+      id: batchNum,
+      title: 'Batch ' + batchNum,
+      slug: 'taoc-batch-' + batchNum,
+      batchNumber: batchNum,
+      imageCount: imageCount,
+      startIndex: startIdx,
+      endIndex: endIdx,
+      palette: TAOC_PALETTES[b % TAOC_PALETTES.length],
+      coverSrc: "taoc card.png",
+      summary: 'The Art of Ceilings — Images ' + startIdx + ' through ' + endIdx + ' (' + imageCount + ' photographs).',
+      pages: pages
+    });
+  }
+
+  return batches;
+}
+
 
 // Global datasets
 window.LUMINA_BOOKS = generateBooksData();
 window.LUMINA_PODCASTS = generatePodcastsData();
+window.LUMINA_TAOC_BATCHES = generateTaocData();
 window.DRAWBOOK_BOOKS = window.LUMINA_BOOKS;
 window.DRAWBOOK_PODCASTS = window.LUMINA_PODCASTS;
 
@@ -206232,30 +206368,30 @@ window.DRAWBOOK_PODCASTS = window.LUMINA_PODCASTS;
  * Data Retrieval Store
  */
 window.BookStore = {
-  getAllBooks() {
+  getAllBooks: function() {
     return window.LUMINA_BOOKS;
   },
 
-  getBookById(id) {
-    const numId = parseInt(id, 10);
-    return window.LUMINA_BOOKS.find(b => b.id === numId) || null;
+  getBookById: function(id) {
+    var numId = parseInt(id, 10);
+    return window.LUMINA_BOOKS.find(function(b) { return b.id === numId; }) || null;
   },
 
-  getBookBySlug(slug) {
-    return window.LUMINA_BOOKS.find(b => b.slug === slug) || null;
+  getBookBySlug: function(slug) {
+    return window.LUMINA_BOOKS.find(function(b) { return b.slug === slug; }) || null;
   },
 
-  getAdjacentBookIds(currentId) {
-    const numId = parseInt(currentId, 10);
-    const availableBooks = window.LUMINA_BOOKS.filter(b => !b.isMissing);
-    const currentIndex = availableBooks.findIndex(b => b.id === numId);
+  getAdjacentBookIds: function(currentId) {
+    var numId = parseInt(currentId, 10);
+    var availableBooks = window.LUMINA_BOOKS.filter(function(b) { return !b.isMissing; });
+    var currentIndex = availableBooks.findIndex(function(b) { return b.id === numId; });
     
     if (currentIndex === -1) {
       return { prevId: null, nextId: null };
     }
 
-    const prevBook = availableBooks[currentIndex - 1];
-    const nextBook = availableBooks[currentIndex + 1];
+    var prevBook = availableBooks[currentIndex - 1];
+    var nextBook = availableBooks[currentIndex + 1];
 
     return {
       prevId: prevBook ? prevBook.id : null,
@@ -206263,16 +206399,45 @@ window.BookStore = {
     };
   },
 
-  getAllPodcasts() {
+  getAllPodcasts: function() {
     return window.LUMINA_PODCASTS;
   },
 
-  getPodcastById(id) {
-    const numId = parseInt(id, 10);
-    return window.LUMINA_PODCASTS.find(p => p.id === numId) || null;
+  getPodcastById: function(id) {
+    var numId = parseInt(id, 10);
+    return window.LUMINA_PODCASTS.find(function(p) { return p.id === numId; }) || null;
   },
 
-  getPodcastBySlug(slug) {
-    return window.LUMINA_PODCASTS.find(p => p.slug === slug) || null;
+  getPodcastBySlug: function(slug) {
+    return window.LUMINA_PODCASTS.find(function(p) { return p.slug === slug; }) || null;
+  },
+
+  // ---- TAOC Methods ----
+
+  getAllTaocBatches: function() {
+    return window.LUMINA_TAOC_BATCHES;
+  },
+
+  getTaocBatchById: function(id) {
+    var numId = parseInt(id, 10);
+    return window.LUMINA_TAOC_BATCHES.find(function(b) { return b.id === numId; }) || null;
+  },
+
+  getAdjacentTaocBatchIds: function(currentId) {
+    var numId = parseInt(currentId, 10);
+    var batches = window.LUMINA_TAOC_BATCHES;
+    var currentIndex = batches.findIndex(function(b) { return b.id === numId; });
+
+    if (currentIndex === -1) {
+      return { prevId: null, nextId: null };
+    }
+
+    var prevBatch = batches[currentIndex - 1];
+    var nextBatch = batches[currentIndex + 1];
+
+    return {
+      prevId: prevBatch ? prevBatch.id : null,
+      nextId: nextBatch ? nextBatch.id : null
+    };
   }
 };
