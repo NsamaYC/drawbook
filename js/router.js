@@ -7,6 +7,7 @@
  * - Podcast Route: `/#/podcast/:id` or `/#/podcast/:slug` (e.g. `/#/podcast/1`)
  * - TAOC Index: `/#/taoc`
  * - TAOC Batch Route: `/#/taoc/:id` (e.g. `/#/taoc/3`)
+ * - Supporters: `/#/supporters`
  */
 
 window.Router = {
@@ -80,6 +81,14 @@ window.Router = {
     if (cleanHash === '/podcasts' && this.routes['/podcasts']) {
       this.currentRoute = { path: '/podcasts', params: {} };
       this.routes['/podcasts']();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Check for Supporters page: `/supporters`
+    if (cleanHash === '/supporters' && this.routes['/supporters']) {
+      this.currentRoute = { path: '/supporters', params: {} };
+      this.routes['/supporters']();
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }

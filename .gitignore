@@ -1,4 +1,6 @@
 # Media assets and large directories
 *.mp4
+*.mp3
+Podcasts/*.png
 book*/
 theartofceilings/

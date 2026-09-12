@@ -63,7 +63,8 @@
       }
       const cleanBase = baseUrl.replace(/\/+$/, '');
       const cleanPath = relativePath.replace(/^\/+/, '');
-      return `${cleanBase}/${cleanPath}`;
+      const encodedPath = cleanPath.split('/').map(seg => encodeURIComponent(decodeURIComponent(seg))).join('/');
+      return `${cleanBase}/${encodedPath}`;
     }
   };
 })();

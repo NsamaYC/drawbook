@@ -206026,196 +206026,166 @@ function generatePodcastsData() {
   return [
     {
       id: 1,
-      slug: "soundsilence",
-      podcastName: "SoundSilence",
-      coverArtUrl: "assets/podcasts/soundsilence-cover.jpg",
-      palette: { primary: "#10b981", secondary: "#059669", accent: "#6ee7b7" },
-      description: "Exploring ambient soundscapes, minimal acoustic production, field recordings, and silence in visual storytelling.",
+      slug: "mic-check",
+      podcastName: "Mic Check",
+      coverArtUrl: "Podcasts/Mic Check/mic check logo.png",
+      palette: { primary: "#ec4899", secondary: "#db2777", accent: "#fbcfe8" },
+      description: "A podcast where we check the microphone before recording more podcasts",
       hostName: "Sean Penalber",
-      socialLink: "https://x.com/seanpenalber",
-      spotifyDirectLink: "https://open.spotify.com/show/soundsilence",
-      streamLinks: [
-        { platform: "Spotify", url: "https://open.spotify.com", icon: "spotify" },
-        { platform: "Apple Podcasts", url: "https://podcasts.apple.com", icon: "apple" },
-        { platform: "SoundCloud", url: "https://soundcloud.com", icon: "soundcloud" },
-        { platform: "YouTube", url: "https://youtube.com", icon: "youtube" },
-        { platform: "Pocket Casts", url: "https://pocketcasts.com", icon: "pocketcasts" }
-      ],
+      socialLink: "",
+      spotifyDirectLink: "",
+      streamLinks: [],
       supportLinks: [
-        { platform: "Patreon", url: "https://patreon.com", logo: "patreon", color: "#FF424D" },
-        { platform: "Venmo", url: "https://venmo.com", logo: "venmo", color: "#008CFF" },
-        { platform: "CashApp", url: "https://cash.app", logo: "cashapp", color: "#00D632" },
-        { platform: "PayPal", url: "https://paypal.com", logo: "paypal", color: "#003087" }
+        { platform: "PayPal", url: "https://www.paypal.com/paypalme/seanpenalber", logo: "paypal", color: "#003087" },
+        { platform: "Venmo", url: "https://account.venmo.com/u/seanpenalber", logo: "venmo", color: "#008CFF" },
+        { platform: "Cash App", url: "https://cash.app/$SeanPenalber", logo: "cashapp", color: "#00D632" }
       ],
       episodes: [
-        {
-          id: "ep-1",
-          title: "Minimalist Soundscapes & Field Recordings",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-          duration: "54:20",
-          releaseDate: "July 20, 2026",
-          coverArt: "assets/podcasts/ep104.jpg"
-        },
-        {
-          id: "ep-2",
-          title: "Dynamic Range, Compression, & Acoustic Silence",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-          duration: "48:15",
-          releaseDate: "July 12, 2026",
-          coverArt: "assets/podcasts/ep103.jpg"
-        },
-        {
-          id: "ep-3",
-          title: "Analog Tape Saturation & Organic Textures",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-          duration: "1:02:40",
-          releaseDate: "July 04, 2026",
-          coverArt: "assets/podcasts/ep102.jpg"
-        },
-        {
-          id: "ep-4",
-          title: "Setting Up a Studio Environment for Audio",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
-          duration: "42:10",
-          releaseDate: "June 25, 2026",
-          coverArt: "assets/podcasts/ep101.jpg"
-        }
+        { id: "mc-01", title: "Mic Check with Rahul Rao", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Rahul-Rao.mp3", duration: "0:08" },
+        { id: "mc-02", title: "Mic Check with Wesley Demaree", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Wesley-Demaree.mp3", duration: "0:08" },
+        { id: "mc-03", title: "Mic Check with Anastasia Kirages", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Anastasia-Kirages.mp3", duration: "0:17" },
+        { id: "mc-04", title: "Mic Check with Meredith Nudo", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Meredith-Nudo.mp3", duration: "0:17" },
+        { id: "mc-05", title: "Mic Check with Vee Ramos", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Vee-Ramos.mp3", duration: "0:20" },
+        { id: "mc-06", title: "Mic Check with Nisha Crossley", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Nisha-Crossley.mp3", duration: "0:28" },
+        { id: "mc-07", title: "Mic Check with Ryan McGhee", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Ryan-McGhee.mp3", duration: "0:39" },
+        { id: "mc-08", title: "Mic Check with Alyssia Dieringer & Beth Alder", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Alyssia-Dieringer-Beth-Alder.mp3", duration: "0:48" },
+        { id: "mc-09", title: "Mic Check with Nick Palermo", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Nick-Palermo.mp3", duration: "0:56" },
+        { id: "mc-10", title: "Mic Check with Cody Miears", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Cody-Miears.mp3", duration: "1:01" },
+        { id: "mc-11", title: "Mic Check with Scott White", audioUrl: "Podcasts/Mic Check/Mic-Check-With-Scott-White.mp3", duration: "1:03" },
+        { id: "mc-12", title: "Mic Check with Bryce Levi Perkins", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Bryce-Levi-Perkins.mp3", duration: "1:09" },
+        { id: "mc-13", title: "Mic Check with Ku Egenti", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Ku-Egenti.mp3", duration: "1:15" },
+        { id: "mc-14", title: "Mic Check with Mad Whit", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Mad-Whit.mp3", duration: "1:24" },
+        { id: "mc-15", title: "Mic Check with Nathaniel Potts-Wells", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Nathaniel-Potts-Wells.mp3", duration: "1:34" },
+        { id: "mc-16", title: "Mic Check with Nkechi Chibueze", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Nkechi-Chibueze.mp3", duration: "1:34" },
+        { id: "mc-17", title: "Mic Check with Schetauna Powell", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Schetauna-Powell.mp3", duration: "2:14" },
+        { id: "mc-18", title: "Mic Check with Jacob Calle", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Jacob-Calle.mp3", duration: "2:30" },
+        { id: "mc-19", title: "Mic Check with Mark Hurtado", audioUrl: "Podcasts/Mic Check/Mic-Check-with-Mark-Hurtado.mp3", duration: "2:48" }
       ]
     },
     {
       id: 2,
-      slug: "mic-check",
-      podcastName: "Mic Check",
-      coverArtUrl: "assets/podcasts/mic-check-cover.jpg",
-      palette: { primary: "#ec4899", secondary: "#db2777", accent: "#fbcfe8" },
-      description: "Live studio gear breakdowns, vocal recording tips, podcast production secrets, and panel interviews.",
+      slug: "ioriro",
+      podcastName: "IORIRO",
+      fullName: "inner \u0026 outer reality, in reality \u0026 outside",
+      coverArtUrl: "Podcasts/IORIRO/IORIROR logo.png",
+      palette: { primary: "#f59e0b", secondary: "#d97706", accent: "#fcd34d" },
+      description: "A podcast where we chat about our thoughts and experiences of life, the universe, and everything while within the comforts (or discomforts) of being outside",
       hostName: "Sean Penalber",
-      socialLink: "https://x.com/seanpenalber",
-      spotifyDirectLink: "https://open.spotify.com/show/mic-check",
-      streamLinks: [
-        { platform: "Spotify", url: "https://open.spotify.com", icon: "spotify" },
-        { platform: "Apple Podcasts", url: "https://podcasts.apple.com", icon: "apple" },
-        { platform: "YouTube", url: "https://youtube.com", icon: "youtube" },
-        { platform: "SoundCloud", url: "https://soundcloud.com", icon: "soundcloud" }
-      ],
+      socialLink: "",
+      spotifyDirectLink: "",
+      streamLinks: [],
       supportLinks: [
-        { platform: "Patreon", url: "https://patreon.com", logo: "patreon", color: "#FF424D" },
-        { platform: "Buy Me a Coffee", url: "https://buymeacoffee.com", logo: "coffee", color: "#FFDD00" },
-        { platform: "PayPal", url: "https://paypal.com", logo: "paypal", color: "#003087" },
-        { platform: "Venmo", url: "https://venmo.com", logo: "venmo", color: "#008CFF" }
+        { platform: "PayPal", url: "https://www.paypal.com/paypalme/seanpenalber", logo: "paypal", color: "#003087" },
+        { platform: "Venmo", url: "https://account.venmo.com/u/seanpenalber", logo: "venmo", color: "#008CFF" },
+        { platform: "Cash App", url: "https://cash.app/$SeanPenalber", logo: "cashapp", color: "#00D632" }
       ],
       episodes: [
-        {
-          id: "ep-1",
-          title: "Dynamic vs Condenser Microphones Live Shootout",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-          duration: "51:05",
-          releaseDate: "July 18, 2026",
-          coverArt: "assets/podcasts/ep204.jpg"
-        },
-        {
-          id: "ep-2",
-          title: "Voiceover Editing & De-Essing Workflows",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
-          duration: "45:30",
-          releaseDate: "July 08, 2026",
-          coverArt: "assets/podcasts/ep203.jpg"
-        },
-        {
-          id: "ep-3",
-          title: "Multi-Host Recording Techniques & Room Noise Control",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
-          duration: "58:12",
-          releaseDate: "June 28, 2026",
-          coverArt: "assets/podcasts/ep202.jpg"
-        }
+        { id: "ior-01", title: "IORIRO with Bob Morrissey", audioUrl: "Podcasts/IORIRO/0001-IORIRO-with-Bob-Morrissey-full-episode.mp3", duration: "25:57" },
+        { id: "ior-02", title: "IORIRO with Qasim Ali", audioUrl: "Podcasts/IORIRO/0002-IORIRO-with-Qasim-Ali-full-episode.mp3", duration: "28:25" },
+        { id: "ior-03", title: "IORIRO with Francois Pointeau", audioUrl: "Podcasts/IORIRO/0003-IORIRO-with-Francois-Pointeau-full-episode.mp3", duration: "49:00" },
+        { id: "ior-04", title: "IORIRO with Anastasia Kirages", audioUrl: "Podcasts/IORIRO/0004-IORIRO-with-Anastasia-Kirages-full-episode.mp3", duration: "47:28" },
+        { id: "ior-05", title: "IORIRO with Wesley Demaree", audioUrl: "Podcasts/IORIRO/0005-IORIRO-with-Wesley-Demaree-full-episode.mp3", duration: "45:33" },
+        { id: "ior-06", title: "IORIRO with Meredith Nudo", audioUrl: "Podcasts/IORIRO/0006-IORIRO-with-Meredith-Nudo.mp3", duration: "51:24" },
+        { id: "ior-07", title: "IORIRO with Vee Ramos", audioUrl: "Podcasts/IORIRO/0007-IORIRO-with-Vee-Ramos.mp3", duration: "48:50" },
+        { id: "ior-08", title: "IORIRO with Rahul Rao", audioUrl: "Podcasts/IORIRO/0008-IORIRO-with-Rahul-Rao.mp3", duration: "26:38" },
+        { id: "ior-09", title: "IORIRO with Nisha Crossley", audioUrl: "Podcasts/IORIRO/0009-IORIRO-with-Nisha-Crossley.mp3", duration: "51:07" },
+        { id: "ior-10", title: "IORIRO with Alyssia Dieringer \u0026 Beth Alder", audioUrl: "Podcasts/IORIRO/0010-IORIRO-with-Alyssia-Dieringer-Beth-Alder.mp3", duration: "46:51" },
+        { id: "ior-11", title: "IORIRO with Ryan McGhee", audioUrl: "Podcasts/IORIRO/0011-IORIRO-with-Ryan-McGhee.mp3", duration: "48:20" },
+        { id: "ior-12", title: "IORIRO with Nick Palermo", audioUrl: "Podcasts/IORIRO/0012-IORIRO-with-Nick-Palermo.mp3", duration: "50:58" },
+        { id: "ior-13", title: "IORIRO with Scott White", audioUrl: "Podcasts/IORIRO/0013-IORIRO-with-Scott-White.mp3", duration: "43:51" },
+        { id: "ior-14", title: "IORIRO with Jacob Calle", audioUrl: "Podcasts/IORIRO/0014-IORIRO-with-Jacob-Calle.mp3", duration: "54:24" },
+        { id: "ior-15", title: "IORIRO with Ku Egenti", audioUrl: "Podcasts/IORIRO/0015-IORIRO-with-Ku-Egenti.mp3", duration: "33:01" },
+        { id: "ior-16", title: "IORIRO with Bryce Levi Perkins", audioUrl: "Podcasts/IORIRO/0016-IORIRO-with-Bryce-Levi-Perkins.mp3", duration: "57:50" },
+        { id: "ior-17", title: "IORIRO with Schetauna Powell", audioUrl: "Podcasts/IORIRO/0017-IORIRO-with-Schetauna-Powell.mp3", duration: "50:40" },
+        { id: "ior-18", title: "IORIRO with Nkechi Chibueze", audioUrl: "Podcasts/IORIRO/0018-IORIRO-with-Nkechi-Chibueze.mp3", duration: "55:04" },
+        { id: "ior-19", title: "IORIRO with Cody Miears", audioUrl: "Podcasts/IORIRO/0019-IORIRO-with-Cody-Miears.mp3", duration: "64:56" },
+        { id: "ior-20", title: "IORIRO with Mark Hurtado", audioUrl: "Podcasts/IORIRO/0020-IORIRO-with-Mark-Hurtado.mp3", duration: "54:00" },
+        { id: "ior-21", title: "IORIRO with Mad Whit", audioUrl: "Podcasts/IORIRO/0021-IORIRO-with-Mad-Whit.mp3", duration: "43:43" },
+        { id: "ior-22", title: "IORIRO with Nathaniel Potts-Wells", audioUrl: "Podcasts/IORIRO/0022-IORIRO-with-Nathaniel-Potts-Wells.mp3", duration: "50:08" }
       ]
     },
     {
       id: 3,
       slug: "the-last-podcast",
       podcastName: "The Last Podcast",
-      coverArtUrl: "assets/podcasts/the-last-podcast-cover.jpg",
+      coverArtUrl: "Podcasts/The Last Podcast/The Last Podcast logo.png",
       palette: { primary: "#06b6d4", secondary: "#0891b2", accent: "#67e8f9" },
-      description: "Deep dives into post-apocalyptic lore, speculative sci-fi worldbuilding, graphic novel endings, and dystopia.",
+      description: "Who/What/When/Where/Why/How was the last...?",
       hostName: "Sean Penalber",
-      socialLink: "https://x.com/seanpenalber",
-      spotifyDirectLink: "https://open.spotify.com/show/the-last-podcast",
-      streamLinks: [
-        { platform: "Spotify", url: "https://open.spotify.com", icon: "spotify" },
-        { platform: "Apple Podcasts", url: "https://podcasts.apple.com", icon: "apple" },
-        { platform: "Pocket Casts", url: "https://pocketcasts.com", icon: "pocketcasts" },
-        { platform: "YouTube", url: "https://youtube.com", icon: "youtube" }
-      ],
+      socialLink: "https://x.com/TLPTheLastPod",
+      spotifyDirectLink: "",
+      streamLinks: [],
       supportLinks: [
-        { platform: "CashApp", url: "https://cash.app", logo: "cashapp", color: "#00D632" },
-        { platform: "Patreon", url: "https://patreon.com", logo: "patreon", color: "#FF424D" },
-        { platform: "PayPal", url: "https://paypal.com", logo: "paypal", color: "#003087" }
+        { platform: "PayPal", url: "https://www.paypal.com/paypalme/seanpenalber", logo: "paypal", color: "#003087" },
+        { platform: "Venmo", url: "https://account.venmo.com/u/seanpenalber", logo: "venmo", color: "#008CFF" },
+        { platform: "Cash App", url: "https://cash.app/$SeanPenalber", logo: "cashapp", color: "#00D632" }
       ],
       episodes: [
-        {
-          id: "ep-1",
-          title: "The Architecture of Dystopian Megacities & Ruins",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-          duration: "1:04:15",
-          releaseDate: "July 22, 2026",
-          coverArt: "assets/podcasts/ep303.jpg"
-        },
-        {
-          id: "ep-2",
-          title: "Final Chapters: Deconstructing Iconic Comic Endings",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
-          duration: "49:50",
-          releaseDate: "July 11, 2026",
-          coverArt: "assets/podcasts/ep302.jpg"
-        },
-        {
-          id: "ep-3",
-          title: "The Last Archive: Preserving Civilization's Records",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
-          duration: "53:40",
-          releaseDate: "July 01, 2026",
-          coverArt: "assets/podcasts/ep301.jpg"
-        }
+        { id: "tlp-01", title: "The Last Podcast with Bob Morrissey", audioUrl: "Podcasts/The Last Podcast/The-Last-Podcast-with-Bob-Morrissey-full-episode.mp3", duration: "27:59" },
+        { id: "tlp-02", title: "The Last Podcast with Qasim Ali", audioUrl: "Podcasts/The Last Podcast/0002-The-Last-Podcast-with-Qasim-Ali-full-episode.mp3", duration: "25:59" },
+        { id: "tlp-03", title: "The Last Podcast with Francois Pointeau", audioUrl: "Podcasts/The Last Podcast/0003-The-Last-Podcast-with-Francois-Pointeau-full-episode.mp3", duration: "26:24" },
+        { id: "tlp-04", title: "The Last Podcast with Anastasia Kirages", audioUrl: "Podcasts/The Last Podcast/0004-The-Last-Podcast-with-Anastasia-Kirages-full-episode.mp3", duration: "26:10" },
+        { id: "tlp-05", title: "The Last Podcast with Wesley Demaree", audioUrl: "Podcasts/The Last Podcast/0005-The-Last-Podcast-with-Wesley-Demaree-full-episode.mp3", duration: "25:34" },
+        { id: "tlp-06", title: "The Last Podcast with Meredith Nudo", audioUrl: "Podcasts/The Last Podcast/0006-The-Last-Podcast-with-Meredith-Nudo-full-episode.mp3", duration: "31:12" },
+        { id: "tlp-07", title: "The Last Podcast with Vee Ramos", audioUrl: "Podcasts/The Last Podcast/0007-The-Last-Podcast-with-Vee-Ramos.mp3", duration: "26:03" },
+        { id: "tlp-08", title: "The Last Podcast with Rahul Rao", audioUrl: "Podcasts/The Last Podcast/0008-The-Last-Podcast-with-Rahul-Rao.mp3", duration: "26:10" },
+        { id: "tlp-09", title: "The Last Podcast with Nisha Crossley", audioUrl: "Podcasts/The Last Podcast/0009-The-Last-Podcast-with-Nisha-Crossley.mp3", duration: "26:07" },
+        { id: "tlp-10", title: "The Last Podcast with Alyssia Dieringer \u0026 Beth Alder", audioUrl: "Podcasts/The Last Podcast/0010-The-Last-Podcast-with-Alyssia-Dieringer-Beth-Alder.mp3", duration: "27:37" },
+        { id: "tlp-11", title: "The Last Podcast with Ryan McGhee", audioUrl: "Podcasts/The Last Podcast/0011-The-Last-Podcast-with-Ryan-McGhee.mp3", duration: "25:28" },
+        { id: "tlp-12", title: "The Last Podcast with Nick Palermo", audioUrl: "Podcasts/The Last Podcast/0012-The-Last-Podcast-with-Nick-Palermo.mp3", duration: "30:21" },
+        { id: "tlp-13", title: "The Last Podcast with Scott White", audioUrl: "Podcasts/The Last Podcast/0013-The-Last-Podcast-with-Scott-White.mp3", duration: "28:54" },
+        { id: "tlp-14", title: "The Last Podcast with Jacob Calle", audioUrl: "Podcasts/The Last Podcast/0014-The-Last-Podcast-with-Jacob-Calle.mp3", duration: "32:57" },
+        { id: "tlp-15", title: "The Last Podcast with Ku Egenti", audioUrl: "Podcasts/The Last Podcast/0015-The-Last-Podcast-with-Ku-Egenti.mp3", duration: "29:48" },
+        { id: "tlp-16", title: "The Last Podcast with Bryce Levi Perkins", audioUrl: "Podcasts/The Last Podcast/0016-The-Last-Podcast-with-Bryce-Levi-Perkins.mp3", duration: "26:11" },
+        { id: "tlp-17", title: "The Last Podcast with Schetauna Powell", audioUrl: "Podcasts/The Last Podcast/0017-The-Last-Podcast-with-Schetauna-Powell.mp3", duration: "27:31" },
+        { id: "tlp-18", title: "The Last Podcast with Nkechi Chibueze", audioUrl: "Podcasts/The Last Podcast/0018-The-Last-Podcast-with-Nkechi-Chibueze.mp3", duration: "28:28" },
+        { id: "tlp-19", title: "The Last Podcast with Cody Miears", audioUrl: "Podcasts/The Last Podcast/0019-The-Last-Podcast-with-Cody-Miears.mp3", duration: "25:02" },
+        { id: "tlp-20", title: "The Last Podcast with Mark Hurtado", audioUrl: "Podcasts/The Last Podcast/0020-The-Last-Podcast-with-Mark-Hurtado.mp3", duration: "30:51" },
+        { id: "tlp-21", title: "The Last Podcast with Mad Whit", audioUrl: "Podcasts/The Last Podcast/0021-The-Last-Podcast-with-Mad-Whit.mp3", duration: "27:39" },
+        { id: "tlp-22", title: "The Last Podcast with Nathaniel Potts-Wells", audioUrl: "Podcasts/The Last Podcast/0022-The-Last-Podcast-with-Nathaniel-Potts-Wells.mp3", duration: "29:02" }
       ]
     },
     {
       id: 4,
-      slug: "iorriro",
-      podcastName: "IORRIRO",
-      coverArtUrl: "assets/podcasts/iorriro-cover.jpg",
-      palette: { primary: "#f59e0b", secondary: "#d97706", accent: "#fcd34d" },
-      description: "Experimental audio art, modular synthesizer compositions, abstract storytelling, and sound design codices.",
+      slug: "sound-silence",
+      podcastName: "Sound \u0026 Silence",
+      coverArtUrl: "Podcasts/Sound \u0026 Silence/Sound \u0026 Silence Logo.png",
+      palette: { primary: "#10b981", secondary: "#059669", accent: "#6ee7b7" },
+      description: "A podcast giving voice to sound and the somewhat silence in-between",
       hostName: "Sean Penalber",
-      socialLink: "https://x.com/seanpenalber",
-      spotifyDirectLink: "https://open.spotify.com/show/iorriro",
-      streamLinks: [
-        { platform: "Spotify", url: "https://open.spotify.com", icon: "spotify" },
-        { platform: "Apple Podcasts", url: "https://podcasts.apple.com", icon: "apple" },
-        { platform: "SoundCloud", url: "https://soundcloud.com", icon: "soundcloud" }
-      ],
+      socialLink: "https://x.com/SoundSilencePod",
+      spotifyDirectLink: "",
+      streamLinks: [],
       supportLinks: [
-        { platform: "Patreon", url: "https://patreon.com", logo: "patreon", color: "#FF424D" },
-        { platform: "Buy Me a Coffee", url: "https://buymeacoffee.com", logo: "coffee", color: "#FFDD00" },
-        { platform: "Venmo", url: "https://venmo.com", logo: "venmo", color: "#008CFF" }
+        { platform: "PayPal", url: "https://www.paypal.com/paypalme/seanpenalber", logo: "paypal", color: "#003087" },
+        { platform: "Venmo", url: "https://account.venmo.com/u/seanpenalber", logo: "venmo", color: "#008CFF" },
+        { platform: "Cash App", url: "https://cash.app/$SeanPenalber", logo: "cashapp", color: "#00D632" }
       ],
       episodes: [
-        {
-          id: "ep-1",
-          title: "Generative Synthesizers & Patch Design Explorations",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3",
-          duration: "38:45",
-          releaseDate: "July 19, 2026",
-          coverArt: "assets/podcasts/ep403.jpg"
-        },
-        {
-          id: "ep-2",
-          title: "Polyrhythms & Harmonic Oscillations in Audio Art",
-          audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3",
-          duration: "44:20",
-          releaseDate: "July 05, 2026",
-          coverArt: "assets/podcasts/ep402.jpg"
-        }
+        { id: "ss-01", title: "Sound \u0026 Silence with Steph Suarez, Tony Griffin \u0026 Jamie Gibbons", audioUrl: "Podcasts/Sound \u0026 Silence/Sound-Silence-ep0001-with-Steph-Suarez-Tony-Griffin-Jamie-Gibbons.mp3", duration: "19:55" },
+        { id: "ss-02", title: "Sound \u0026 Silence with Colin and Jeremy", audioUrl: "Podcasts/Sound \u0026 Silence/Sound-Silence-ep0002-with-Colin-and-Jeremy.mp3", duration: "16:40" },
+        { id: "ss-03", title: "Sound \u0026 Silence with Britt Vasicek \u0026 Mike Tack", audioUrl: "Podcasts/Sound \u0026 Silence/Sound-Silence-ep0003-with-Britt-Vasicek-Mike-Tack.mp3", duration: "23:17" },
+        { id: "ss-04", title: "Sound \u0026 Silence with Bob Morrissey", audioUrl: "Podcasts/Sound \u0026 Silence/0004-Sound-Silence-with-Bob-Morrissey-full-episode.mp3", duration: "18:57" },
+        { id: "ss-05", title: "Sound \u0026 Silence with Qasim Ali", audioUrl: "Podcasts/Sound \u0026 Silence/0005-Sound-Silence-with-Qasim-Ali-full-episode.mp3", duration: "18:19" },
+        { id: "ss-06", title: "Sound \u0026 Silence with Francois Pointeau", audioUrl: "Podcasts/Sound \u0026 Silence/0006-Sound-Silence-with-Francois-Pointeau-full-episode.mp3", duration: "28:30" },
+        { id: "ss-07", title: "Sound \u0026 Silence with Anastasia Kirages", audioUrl: "Podcasts/Sound \u0026 Silence/0007-Sound-Silence-with-Anastasia-Kirages-full-episode.mp3", duration: "26:20" },
+        { id: "ss-08", title: "Sound \u0026 Silence with Wesley Demaree", audioUrl: "Podcasts/Sound \u0026 Silence/0008-Sound-Silence-with-Wesley-Demaree-full-episode.mp3", duration: "21:42" },
+        { id: "ss-09", title: "Sound \u0026 Silence with Meredith Nudo", audioUrl: "Podcasts/Sound \u0026 Silence/0009-Sound-Silence-with-Meredith-Nudo-full-episode.mp3", duration: "35:59" },
+        { id: "ss-10", title: "Sound \u0026 Silence with Vee Ramos", audioUrl: "Podcasts/Sound \u0026 Silence/0010-Sound-Silence-with-Vee-Ramos-full-episode.mp3", duration: "25:32" },
+        { id: "ss-11", title: "Sound \u0026 Silence with Rahul Rao", audioUrl: "Podcasts/Sound \u0026 Silence/0011-Sound-Silence-with-Rahul-Rao-full-episode.mp3", duration: "30:17" },
+        { id: "ss-12", title: "Sound \u0026 Silence with Nisha Crossley", audioUrl: "Podcasts/Sound \u0026 Silence/0012-Sound-Silence-with-Nisha-Crossley-full-episode.mp3", duration: "20:57" },
+        { id: "ss-13", title: "Sound \u0026 Silence with Alyssia Dieringer \u0026 Beth Alder", audioUrl: "Podcasts/Sound \u0026 Silence/0013-Sound-Silence-with-Alyssia-Dieringer-Beth-Alder-full-episode.mp3", duration: "28:31" },
+        { id: "ss-14", title: "Sound \u0026 Silence with Ryan McGhee", audioUrl: "Podcasts/Sound \u0026 Silence/0014-Sound-Silence-with-Ryan-McGhee-full-episode.mp3", duration: "22:59" },
+        { id: "ss-16", title: "Sound \u0026 Silence with Scott White", audioUrl: "Podcasts/Sound \u0026 Silence/0016-Sound-Silence-with-Scott-White-full-episode.mp3", duration: "21:13" },
+        { id: "ss-17", title: "Sound \u0026 Silence with Jacob Calle", audioUrl: "Podcasts/Sound \u0026 Silence/0017-Sound-Silence-with-Jacob-Calle-full-episode.mp3", duration: "38:18" },
+        { id: "ss-18", title: "Sound \u0026 Silence with Ku Egenti", audioUrl: "Podcasts/Sound \u0026 Silence/0018-Sound-Silence-with-Ku-Egenti-full-episode.mp3", duration: "21:56" },
+        { id: "ss-19", title: "Sound \u0026 Silence with Bryce Levi Perkins", audioUrl: "Podcasts/Sound \u0026 Silence/0019-Sound-Silence-with-Bryce-Levi-Perkins-full-episode.mp3", duration: "22:57" },
+        { id: "ss-20", title: "Sound \u0026 Silence with Schetauna Powell", audioUrl: "Podcasts/Sound \u0026 Silence/0020-Sound-Silence-with-Schetauna-Powell-full-episode.mp3", duration: "35:53" },
+        { id: "ss-21", title: "Sound \u0026 Silence with Nkechi Chibueze", audioUrl: "Podcasts/Sound \u0026 Silence/0021-Sound-Silence-with-Nkechi-Chibueze-full-episode.mp3", duration: "31:23" },
+        { id: "ss-22", title: "Sound \u0026 Silence with Cody Miears", audioUrl: "Podcasts/Sound \u0026 Silence/0022-Sound-Silence-with-Cody-Miears-full-episode.mp3", duration: "24:30" },
+        { id: "ss-23", title: "Sound \u0026 Silence with Mark Hurtado", audioUrl: "Podcasts/Sound \u0026 Silence/0023-Sound-Silence-with-Mark-Hurtado-full-episode.mp3", duration: "32:36" },
+        { id: "ss-24", title: "Sound \u0026 Silence with Mad Whit", audioUrl: "Podcasts/Sound \u0026 Silence/0024-Sound-Silence-with-Mad-Whit-full-episode.mp3", duration: "41:18" },
+        { id: "ss-25", title: "Sound \u0026 Silence with Nathaniel Potts-Wells", audioUrl: "Podcasts/Sound \u0026 Silence/0025-Sound-Silence-with-Nathaniel-Potts-Wells-full-episode.mp3", duration: "19:44" }
       ]
     }
   ];

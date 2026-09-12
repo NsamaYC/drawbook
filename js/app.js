@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const navIndexBtn = document.getElementById('nav-index-btn');
   const navPodcastsBtn = document.getElementById('nav-podcasts-btn');
   const navTaocBtn = document.getElementById('nav-taoc-btn');
+  const navSupportersBtn = document.getElementById('nav-supporters-btn');
 
   const lightboxModal = document.getElementById('lightbox-modal');
   const lightboxStage = document.getElementById('lightbox-stage');
@@ -207,10 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
       renderPodcastLandingPage(podcast);
     });
 
-    // Route 5: TAOC Index (Batch Grid)
+    // Route 5: @TheArtOfCeilings Index (Batch Grid)
     window.Router.register('/taoc', () => {
       cleanupActiveControllers();
-      document.title = 'Drawbook | The Art of Ceilings';
+      document.title = 'Drawbook | @TheArtOfCeilings';
       state.currentBook = null;
       state.currentPodcast = null;
       state.currentTaocBatch = null;
@@ -218,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderTaocIndex();
     });
 
-    // Route 6: Virtualized TAOC Batch Viewer with Precision Touch-Scrubber
+    // Route 6: Virtualized @TheArtOfCeilings Batch Viewer
     window.Router.register('/taoc/:id', (batchId) => {
       cleanupActiveControllers();
       const batch = window.BookStore.getTaocBatchById(batchId);
@@ -230,8 +231,19 @@ document.addEventListener('DOMContentLoaded', () => {
       state.currentBook = null;
       state.currentPodcast = null;
       updateActiveNav('taoc');
-      document.title = `TAOC ${batch.title} — The Art of Ceilings`;
+      document.title = `@TheArtOfCeilings ${batch.title}`;
       renderTaocBatchViewer(batch);
+    });
+
+    // Route 7: Supporters Page
+    window.Router.register('/supporters', () => {
+      cleanupActiveControllers();
+      document.title = 'Drawbook | Supporters & Patrons';
+      state.currentBook = null;
+      state.currentPodcast = null;
+      state.currentTaocBatch = null;
+      updateActiveNav('supporters');
+      renderSupportersPage();
     });
 
     window.Router.init();
@@ -241,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
     navIndexBtn.classList.remove('active');
     navPodcastsBtn.classList.remove('active');
     if (navTaocBtn) navTaocBtn.classList.remove('active');
+    if (navSupportersBtn) navSupportersBtn.classList.remove('active');
 
     if (type === 'books') {
       navIndexBtn.classList.add('active');
@@ -248,6 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
       navPodcastsBtn.classList.add('active');
     } else if (type === 'taoc') {
       if (navTaocBtn) navTaocBtn.classList.add('active');
+    } else if (type === 'supporters') {
+      if (navSupportersBtn) navSupportersBtn.classList.add('active');
     }
   }
 
@@ -487,45 +502,116 @@ document.addEventListener('DOMContentLoaded', () => {
   // RENDERERS: PODCASTS MAINPAGE HUB
   // =========================================================================
 
-  function renderPodcastsHub() {
-    mainContent.innerHTML = `
-      <div class="podcasts-hub-container">
-        <section class="library-hero">
-          <h1 class="library-title">Drawbook Podcast Series</h1>
-          <p class="library-subtitle">Explore 4 original audio series hosted by Sean Penalber.</p>
-        </section>
+  // =========================================================================
+  // RENDERERS: PODCASTS MAINPAGE HUB (VERTICAL SCROLL REEL)
+  // =========================================================================
 
-        <div class="podcasts-grid">
-          ${state.podcasts.map(podcast => `
-            <a href="#/podcast/${podcast.id}" class="podcast-hub-card" aria-label="Open ${podcast.podcastName}">
-              <div class="podcast-hub-cover">
-                ${window.PageRenderer.createPodcastCoverSvg(podcast)}
-              </div>
-              <div class="podcast-hub-body">
-                <h2 class="podcast-hub-title">${podcast.podcastName}</h2>
-                <div class="podcast-hub-host">Hosted by ${podcast.hostName}</div>
-                <p class="podcast-hub-desc">${podcast.description}</p>
-                <div class="podcast-hub-footer">
-                  <span>${podcast.episodes.length} Episodes</span>
-                  <span class="podcast-hub-btn">
-                    Listen Now
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </span>
+  function renderPodcastsHub() {
+    const podcasts = state.podcasts;
+
+    mainContent.innerHTML = `
+      <div class="podcasts-reel-container" id="podcasts-reel">
+        <!-- Floating Vertical Navigation Dots -->
+        <nav class="reel-nav-dots" aria-label="Podcast Reel Navigation">
+          ${podcasts.map((pod, idx) => `
+            <button class="reel-dot-btn ${idx === 0 ? 'active' : ''}" data-index="${idx}" aria-label="Scroll to ${escapeHtml(pod.podcastName)}"></button>
+          `).join('')}
+        </nav>
+
+        <!-- Full-screen Reel Sections -->
+        ${podcasts.map((pod, idx) => {
+          const resolvedCover = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(pod.coverArtUrl) : pod.coverArtUrl;
+          const targetRoute = `#/podcast/${pod.slug || pod.id}`;
+          return `
+            <section class="podcast-reel-section" id="reel-section-${idx}" data-index="${idx}">
+              <div class="podcast-reel-ambient-bg" style="background-image: url('${resolvedCover}');"></div>
+              
+              <div class="podcast-reel-content">
+                <div class="podcast-reel-cover-wrap">
+                  <a href="${targetRoute}" aria-label="Open ${escapeHtml(pod.podcastName)}">
+                    <img src="${resolvedCover}" alt="${escapeHtml(pod.podcastName)} Cover" loading="${idx === 0 ? 'eager' : 'lazy'}" onerror="this.onerror=null;this.src='${encodeURI(pod.coverArtUrl)}';">
+                  </a>
+                </div>
+
+                <div class="podcast-reel-card">
+                  <div class="podcast-reel-badge-row">
+                    <span class="podcast-reel-index">SERIES 0${idx + 1}</span>
+                    <span class="podcast-reel-ep-count">${pod.episodes.length} Episodes</span>
+                  </div>
+
+                  <h1 class="podcast-reel-title">${escapeHtml(pod.podcastName)}</h1>
+                  <div class="podcast-reel-host">Hosted by ${escapeHtml(pod.hostName || 'Sean Penalber')}</div>
+                  <p class="podcast-reel-desc">${escapeHtml(pod.description)}</p>
+
+                  <div class="podcast-reel-actions">
+                    <a href="${targetRoute}" class="podcast-reel-btn">
+                      <span>Explore Episodes</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    ${pod.socialLink ? `
+                      <a href="${escapeHtml(pod.socialLink)}" target="_blank" rel="noopener" class="podcast-reel-social" title="Host Profile on X">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                      </a>
+                    ` : ''}
+                  </div>
                 </div>
               </div>
-            </a>
-          `).join('')}
-        </div>
+
+              ${idx === 0 ? `
+                <div class="reel-scroll-hint">
+                  <span>Scroll to explore</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                </div>
+              ` : ''}
+            </section>
+          `;
+        }).join('')}
       </div>
     `;
-    initScrollObserver();
+
+    const reelContainer = document.getElementById('podcasts-reel');
+    const dotBtns = document.querySelectorAll('.reel-dot-btn');
+    const sections = document.querySelectorAll('.podcast-reel-section');
+
+    dotBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = parseInt(btn.getAttribute('data-index'), 10);
+        if (sections[index]) {
+          sections[index].scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      const reelObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = parseInt(entry.target.getAttribute('data-index'), 10);
+            dotBtns.forEach((dot, dIdx) => {
+              dot.classList.toggle('active', dIdx === idx);
+            });
+          }
+        });
+      }, { root: reelContainer, threshold: 0.55 });
+
+      sections.forEach(sec => reelObserver.observe(sec));
+    }
   }
 
   // =========================================================================
-  // MODULAR PODCAST LANDING PAGE TEMPLATE
+  // MODULAR PODCAST LANDING PAGE TEMPLATE (CUSTOM AUDIO PLAYER)
   // =========================================================================
 
+  function formatAudioTime(seconds) {
+    if (isNaN(seconds) || seconds < 0) return '00:00';
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+
   function renderPodcastLandingPage(data) {
+    const resolvedCover = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(data.coverArtUrl) : data.coverArtUrl;
+
     mainContent.innerHTML = `
       <div class="podcast-landing-layout">
         
@@ -536,9 +622,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <div class="podcast-sidebar-info">
-            <h2 class="podcast-sidebar-title">${escapeHtml(data.podcastName)}</h2>
+            <h1 class="podcast-sidebar-title">${escapeHtml(data.podcastName)}</h1>
             <div class="podcast-host-byline">
-              <span>Hosted by ${escapeHtml(data.hostName)}</span>
+              <span>Hosted by ${escapeHtml(data.hostName || 'Sean Penalber')}</span>
               ${data.socialLink ? `
                 <a href="${escapeHtml(data.socialLink)}" target="_blank" rel="noopener" class="podcast-social-link" title="Host Social Profile">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -560,7 +646,11 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="podcast-sidebar-section">
             <h3 class="sidebar-section-title">Stream Us</h3>
             <ul class="stream-links-list">
-              ${data.streamLinks.map(stream => `
+              ${(data.streamLinks || [
+                { platform: "Apple Podcasts", url: "#" },
+                { platform: "Spotify", url: "#" },
+                { platform: "YouTube", url: "#" }
+              ]).map(stream => `
                 <li class="stream-link-item">
                   <a href="${escapeHtml(stream.url)}" target="_blank" rel="noopener">
                     <span>${escapeHtml(stream.platform)}</span>
@@ -574,7 +664,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="podcast-sidebar-section">
             <h3 class="sidebar-section-title">Support Us</h3>
             <div class="support-logos-grid">
-              ${data.supportLinks.map(support => `
+              ${(data.supportLinks || [
+                { platform: "Patreon", url: "https://patreon.com", color: "#f96854" },
+                { platform: "Venmo", url: "https://account.venmo.com/u/seanpenalber", color: "#008cff" },
+                { platform: "Cash App", url: "https://cash.app/$SeanPenalber", color: "#00d632" },
+                { platform: "PayPal", url: "https://paypal.com/paypalme/seanpenalber", color: "#003087" }
+              ]).map(support => `
                 <a href="${escapeHtml(support.url)}" target="_blank" rel="noopener" class="support-logo-card" style="background-color: ${support.color || '#1e293b'};">
                   ${window.PageRenderer.getSupportLogoSvg(support.logo || support.platform)}
                   <span>${escapeHtml(support.platform)}</span>
@@ -591,70 +686,192 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="feed-count">${data.episodes.length} Episodes</span>
           </div>
 
-          <div class="episodes-feed-list">
-            ${data.episodes.map(ep => `
-              <article class="episode-card" id="ep-${ep.id}">
-                <div class="episode-header">
-                  <div class="episode-thumbnail">
-                    ${window.PageRenderer.createPodcastCoverSvg(data)}
+          <div class="episodes-feed-list" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            ${data.episodes.map(ep => {
+              const epAudio = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(ep.audioUrl) : ep.audioUrl;
+              return `
+                <article class="custom-episode-card" id="ep-${ep.id}">
+                  <div class="custom-episode-thumb-wrap">
+                    <img src="${resolvedCover}" alt="${escapeHtml(data.podcastName)} Thumbnail" loading="lazy" onerror="this.onerror=null;this.src='${encodeURI(data.coverArtUrl)}';">
                   </div>
-                  <div class="episode-info">
-                    <div class="episode-meta-row">
-                      <span>${escapeHtml(ep.releaseDate || '2026')}</span>
-                      <span>•</span>
-                      <span>Duration: ${escapeHtml(ep.duration)}</span>
+
+                  <div class="custom-episode-body">
+                    <div class="custom-ep-series-name">${escapeHtml(data.podcastName)}</div>
+                    <h3 class="custom-ep-title">${escapeHtml(ep.title)}</h3>
+
+                    <div class="custom-player-bar">
+                      <button class="custom-play-btn" data-audio-id="audio-${ep.id}" aria-label="Play ${escapeHtml(ep.title)}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                      </button>
+
+                      <div class="custom-scrubber-wrap">
+                        <div class="custom-scrubber-top">
+                          <input type="range" class="custom-scrub-range" min="0" max="100" value="0" step="0.1" data-audio-id="audio-${ep.id}" aria-label="Scrub episode audio">
+                          <span class="custom-time-text" id="time-${ep.id}">00:00 / ${escapeHtml(ep.duration || '00:00')}</span>
+                        </div>
+
+                        <div class="custom-secondary-controls">
+                          <button class="custom-icon-ctrl btn-vol" data-audio-id="audio-${ep.id}" title="Mute/Unmute" aria-label="Mute or unmute">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                          </button>
+                          
+                          <button class="custom-icon-ctrl btn-skip-back" data-audio-id="audio-${ep.id}" title="Rewind 10s" aria-label="Rewind 10 seconds">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><text x="12" y="15" font-size="8" font-family="sans-serif" font-weight="bold" fill="currentColor" text-anchor="middle">10</text></svg>
+                          </button>
+
+                          <button class="custom-icon-ctrl custom-speed-badge btn-speed" data-audio-id="audio-${ep.id}" title="Playback speed" aria-label="Change playback speed">1x</button>
+
+                          <button class="custom-icon-ctrl btn-skip-fwd" data-audio-id="audio-${ep.id}" title="Forward 30s" aria-label="Forward 30 seconds">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><text x="12" y="15" font-size="8" font-family="sans-serif" font-weight="bold" fill="currentColor" text-anchor="middle">30</text></svg>
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                    <h3 class="episode-title">${escapeHtml(ep.title)}</h3>
+
+                    <div class="custom-action-links">
+                      <button class="custom-action-link btn-sub" data-ep-title="${escapeHtml(ep.title)}">SUBSCRIBE</button>
+                      <button class="custom-action-link btn-share" data-ep-title="${escapeHtml(ep.title)}">SHARE</button>
+                      <a href="${escapeHtml(epAudio)}" download class="custom-action-link">DOWNLOAD MP3</a>
+                    </div>
+
+                    <!-- Audio Element -->
+                    <audio id="audio-${ep.id}" src="${escapeHtml(epAudio)}" preload="none"></audio>
                   </div>
-                </div>
-
-                <div class="audio-player-wrapper">
-                  <audio controls preload="metadata">
-                    <source src="${escapeHtml(ep.audioUrl)}" type="audio/mpeg">
-                    Your browser does not support the audio element.
-                  </audio>
-                </div>
-
-                <div class="episode-actions-row">
-                  <button class="episode-action-btn action-share-btn" data-ep-title="${escapeHtml(ep.title)}">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-                    <span>Share</span>
-                  </button>
-
-                  <button class="episode-action-btn action-rss-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11a9 9 0 019 9M4 4a16 16 0 0116 16"/><circle cx="5" cy="19" r="1"/></svg>
-                    <span>RSS Feed</span>
-                  </button>
-
-                  <a href="${escapeHtml(ep.audioUrl)}" download class="episode-action-btn action-download-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                    <span>Download MP3</span>
-                  </a>
-                </div>
-              </article>
-            `).join('')}
+                </article>
+              `;
+            }).join('')}
           </div>
         </section>
       </div>
     `;
 
-    const shareBtns = document.querySelectorAll('.action-share-btn');
-    shareBtns.forEach(btn => {
+    // Interactive Audio Engine
+    let activeAudio = null;
+    let activePlayBtn = null;
+
+    const playBtns = document.querySelectorAll('.custom-play-btn');
+    playBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        const title = btn.getAttribute('data-ep-title');
-        if (navigator.clipboard) {
-          navigator.clipboard.writeText(window.location.href);
-          showToast(`Copied share link for "${title}"`);
+        const audioId = btn.getAttribute('data-audio-id');
+        const audio = document.getElementById(audioId);
+        if (!audio) return;
+
+        if (activeAudio && activeAudio !== audio) {
+          activeAudio.pause();
+          if (activePlayBtn) {
+            activePlayBtn.classList.remove('playing');
+            activePlayBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+          }
+        }
+
+        if (audio.paused) {
+          audio.play().then(() => {
+            btn.classList.add('playing');
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+            activeAudio = audio;
+            activePlayBtn = btn;
+          }).catch(err => {
+            console.warn('Playback notice:', err);
+            showToast('Audio loading, please tap play again...');
+          });
         } else {
-          showToast(`Share link ready: ${window.location.href}`);
+          audio.pause();
+          btn.classList.remove('playing');
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         }
       });
     });
 
-    const rssBtns = document.querySelectorAll('.action-rss-btn');
-    rssBtns.forEach(btn => {
+    document.querySelectorAll('.custom-scrub-range').forEach(slider => {
+      const audioId = slider.getAttribute('data-audio-id');
+      const audio = document.getElementById(audioId);
+      const epId = audioId.replace('audio-', '');
+      const timeDisplay = document.getElementById(`time-${epId}`);
+      if (!audio) return;
+
+      audio.addEventListener('timeupdate', () => {
+        if (audio.duration) {
+          slider.value = (audio.currentTime / audio.duration) * 100;
+          if (timeDisplay) {
+            timeDisplay.textContent = `${formatAudioTime(audio.currentTime)} / ${formatAudioTime(audio.duration)}`;
+          }
+        }
+      });
+
+      audio.addEventListener('ended', () => {
+        const btn = document.querySelector(`.custom-play-btn[data-audio-id="${audioId}"]`);
+        if (btn) {
+          btn.classList.remove('playing');
+          btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        }
+        slider.value = 0;
+      });
+
+      const onSeek = () => {
+        if (audio.duration) {
+          audio.currentTime = (slider.value / 100) * audio.duration;
+        }
+      };
+      slider.addEventListener('input', onSeek);
+      slider.addEventListener('change', onSeek);
+    });
+
+    document.querySelectorAll('.btn-skip-back').forEach(btn => {
       btn.addEventListener('click', () => {
-        showToast(`RSS Feed URL copied for ${data.podcastName}`);
+        const audio = document.getElementById(btn.getAttribute('data-audio-id'));
+        if (audio) audio.currentTime = Math.max(0, audio.currentTime - 10);
+      });
+    });
+
+    document.querySelectorAll('.btn-skip-fwd').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const audio = document.getElementById(btn.getAttribute('data-audio-id'));
+        if (audio) audio.currentTime = Math.min(audio.duration || Infinity, audio.currentTime + 30);
+      });
+    });
+
+    document.querySelectorAll('.btn-vol').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const audio = document.getElementById(btn.getAttribute('data-audio-id'));
+        if (audio) {
+          audio.muted = !audio.muted;
+          btn.innerHTML = audio.muted ?
+            `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/></svg>` :
+            `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-speed').forEach(btn => {
+      const speeds = [1, 1.25, 1.5, 2];
+      let sIdx = 0;
+      btn.addEventListener('click', () => {
+        const audio = document.getElementById(btn.getAttribute('data-audio-id'));
+        if (audio) {
+          sIdx = (sIdx + 1) % speeds.length;
+          const newSpeed = speeds[sIdx];
+          audio.playbackRate = newSpeed;
+          btn.textContent = `${newSpeed}x`;
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-share').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const epTitle = btn.getAttribute('data-ep-title');
+        const shareUrl = `${window.location.origin}${window.location.pathname}#/podcast/${data.slug || data.id}`;
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(shareUrl);
+          showToast(`Copied episode link for "${epTitle}"`);
+        } else {
+          showToast(`Share URL: ${shareUrl}`);
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-sub').forEach(btn => {
+      btn.addEventListener('click', () => {
+        showToast(`Subscribed to ${data.podcastName}! Follow @${data.podcastName.replace(/\\s+/g, '')} for updates.`);
       });
     });
 
@@ -662,11 +879,106 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // RENDERERS: TAOC (The Art of Ceilings)
+  // RENDERERS: SUPPORTERS & PATRONS PAGE
+  // =========================================================================
+
+  function renderSupportersPage() {
+    const supporterColumns = [
+      [
+        { name: "Sean Penalber", tier: "Founder & Artist" },
+        { name: "Whodathunk Band", tier: "Creative Partner" },
+        { name: "The School of Funk", tier: "Cultural Partner" },
+        { name: "Bob Morrissey", tier: "Visionary Patron" },
+        { name: "Qasim Ali", tier: "Founding Patron" },
+        { name: "Francois Pointeau", tier: "Master Patron" },
+        { name: "Anastasia Kirages", tier: "Key Contributor" },
+        { name: "Wesley Demaree", tier: "Founding Supporter" },
+        { name: "Meredith Nudo", tier: "Sustaining Patron" },
+        { name: "Vee Ramos", tier: "Arts Advocate" }
+      ],
+      [
+        { name: "Rahul Rao", tier: "Arts Benefactor" },
+        { name: "Nisha Crossley", tier: "Honorary Patron" },
+        { name: "Alyssia Dieringer", tier: "Creative Sponsor" },
+        { name: "Beth Alder", tier: "Creative Sponsor" },
+        { name: "Nick Palermo", tier: "Patron of Sound" },
+        { name: "Cody Miears", tier: "Gallery Patron" },
+        { name: "Scott White", tier: "Studio Supporter" },
+        { name: "Bryce Levi Perkins", tier: "Sustaining Patron" },
+        { name: "Ku Egenti", tier: "Arts Champion" },
+        { name: "Mad Whit", tier: "Cultural Benefactor" }
+      ],
+      [
+        { name: "Nathaniel Potts-Wells", tier: "Creative Patron" },
+        { name: "Nkechi Chibueze", tier: "Honorary Sponsor" },
+        { name: "Schetauna Powell", tier: "Patron of the Arts" },
+        { name: "Jacob Calle", tier: "Explorer Patron" },
+        { name: "Mark Hurtado", tier: "Sound Patron" },
+        { name: "Elena Rostova", tier: "Archival Patron" },
+        { name: "Marcus Vance", tier: "Collector" },
+        { name: "Camila Torres", tier: "Gallery Friend" },
+        { name: "Julian Sterling", tier: "Sustaining Patron" },
+        { name: "Amara Osei", tier: "Arts Benefactor" }
+      ],
+      [
+        { name: "Siddharth Mehta", tier: "Digital Archivist" },
+        { name: "Leila Chen", tier: "Patron" },
+        { name: "Darius Thorne", tier: "Honorary Supporter" },
+        { name: "Zoe Katsaros", tier: "Creative Sponsor" },
+        { name: "Trevor Vance", tier: "Founding Contributor" },
+        { name: "Haruto Takahashi", tier: "International Patron" },
+        { name: "Miriam Al-Mansoor", tier: "Gallery Patron" },
+        { name: "Felix Beaulieu", tier: "Collector" },
+        { name: "Seraphina Cruz", tier: "Arts Advocate" },
+        { name: "David M. Keller", tier: "Sustaining Patron" }
+      ]
+    ];
+
+    mainContent.innerHTML = `
+      <div class="supporters-page-wrap">
+        <div class="supporters-vignette"></div>
+
+        <header class="supporters-hero-header">
+          <h1 class="supporters-title">OUR SUPPORTERS</h1>
+          <p class="supporters-subtitle">With profound gratitude to the patrons, collectors, collaborators, and friends who champion independent art, publishing, and sonic storytelling.</p>
+        </header>
+
+        <div class="supporters-marquee-container" aria-label="Supporters marquee list">
+          ${supporterColumns.map((col, cIdx) => {
+            const duplicated = [...col, ...col, ...col];
+            return `
+              <div class="marquee-column marquee-col-${cIdx + 1}">
+                ${duplicated.map(sup => `
+                  <div class="supporter-item">
+                    <span class="supporter-name">${escapeHtml(sup.name)}</span>
+                    <span class="supporter-tier">${escapeHtml(sup.tier)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="supporters-footer-card">
+          <h2 class="supporters-footer-title">Join Our Circle of Patrons</h2>
+          <p class="supporters-footer-desc">Support continuous production of sketchbooks, digital preservation, podcasts, and the ceiling art archive.</p>
+          <div class="supporters-footer-links">
+            <a href="https://paypal.com/paypalme/seanpenalber" target="_blank" rel="noopener" class="taoc-payment-btn paypal">PayPal</a>
+            <a href="https://account.venmo.com/u/seanpenalber" target="_blank" rel="noopener" class="taoc-payment-btn venmo">Venmo</a>
+            <a href="https://cash.app/$SeanPenalber" target="_blank" rel="noopener" class="taoc-payment-btn cashapp">Cash App</a>
+            <a href="#/taoc" class="podcast-reel-btn">Acquire Ceiling Art & Cards →</a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // =========================================================================
+  // RENDERERS: @TheArtOfCeilings GALLERY
   // =========================================================================
 
   /**
-   * TAOC Index Page — Grid of batch cards
+   * @TheArtOfCeilings Index Page — Grid of batch cards & Trading Card Acquisition
    */
   function renderTaocIndex() {
     const batches = state.taocBatches;
@@ -674,8 +986,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mainContent.innerHTML = `
       <section class="library-hero taoc-hero">
-        <h1 class="library-title">The Art of Ceilings</h1>
-        <p class="library-subtitle">${totalImages.toLocaleString()} photographs of architectural ceilings, organized into ${batches.length} batches of up to 300 images each.</p>
+        <h1 class="library-title">@TheArtOfCeilings</h1>
+        <p class="library-subtitle">Discover a new perspective with our exclusive collection of ceiling art photographs. Over ${totalImages.toLocaleString()} high-resolution images organized into ${batches.length} curated batches.</p>
       </section>
 
       <div class="taoc-batches-grid">
@@ -684,7 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
           return `
             <a href="#/taoc/${batch.id}" class="taoc-batch-card" aria-label="Open ${batch.title} — Images ${batch.startIndex} to ${batch.endIndex}">
               <div class="taoc-batch-cover-wrap">
-                <img src="${coverSrc}" alt="The Art of Ceilings — ${batch.title}" class="taoc-batch-cover-img" loading="lazy">
+                <img src="${coverSrc}" alt="@TheArtOfCeilings — ${batch.title}" class="taoc-batch-cover-img" loading="lazy">
                 <div class="taoc-batch-cover-overlay">
                   <span class="taoc-batch-number">Batch ${batch.batchNumber}</span>
                 </div>
@@ -700,6 +1012,91 @@ document.addEventListener('DOMContentLoaded', () => {
           `;
         }).join('')}
       </div>
+
+      <!-- Trading Card Acquisition & Collector Section -->
+      <section class="taoc-acquire-section">
+        <div class="taoc-acquire-header">
+          <span class="taoc-acquire-badge">Exclusive Collector Cards</span>
+          <h2 class="taoc-acquire-title">Acquire Original Trading Cards</h2>
+          <p class="taoc-acquire-subtitle">Physical trading cards and collector prints from @TheArtOfCeilings archive are available for individual acquisition. Each card features original photography from the collection. All card purchases come with a surprise gift!</p>
+        </div>
+
+        <div class="taoc-acquire-grid">
+          <div class="taoc-acquire-card">
+            <h3 class="taoc-card-heading">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+              How to Place an Order
+            </h3>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">To acquire cards or prints, send an email to either address below:</p>
+            
+            <div class="taoc-email-links">
+              <a href="mailto:whodathunkband@gmail.com" class="taoc-email-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                whodathunkband@gmail.com
+              </a>
+              <a href="mailto:theeschooloffunk@gmail.com" class="taoc-email-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                theeschooloffunk@gmail.com
+              </a>
+            </div>
+
+            <p style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); margin-top: 0.5rem;">Please include the following in your message:</p>
+            <ul class="taoc-steps-list">
+              <li class="taoc-step-item">
+                <span class="taoc-step-num">1</span>
+                <span><strong>Your Name</strong></span>
+              </li>
+              <li class="taoc-step-item">
+                <span class="taoc-step-num">2</span>
+                <span><strong>Card Number(s) (#)</strong> from the gallery (e.g. #0042)</span>
+              </li>
+              <li class="taoc-step-item">
+                <span class="taoc-step-num">3</span>
+                <span><strong>Phone Number</strong> <em>(optional)</em></span>
+              </li>
+              <li class="taoc-step-item">
+                <span class="taoc-step-num">4</span>
+                <span><strong>Social Media Handle</strong> <em>(optional)</em></span>
+              </li>
+              <li class="taoc-step-item">
+                <span class="taoc-step-num">5</span>
+                <span><strong>Mailing Address</strong> <em>(if shipping is required)</em></span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="taoc-acquire-card">
+            <h3 class="taoc-card-heading">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Payment Methods
+            </h3>
+            <p style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5;">Direct payments can be completed via:</p>
+
+            <div class="taoc-payment-links-grid">
+              <a href="https://paypal.com/paypalme/seanpenalber" target="_blank" rel="noopener" class="taoc-payment-btn paypal">
+                <span>PayPal</span>
+              </a>
+              <a href="https://account.venmo.com/u/seanpenalber" target="_blank" rel="noopener" class="taoc-payment-btn venmo">
+                <span>Venmo</span>
+              </a>
+              <a href="https://cash.app/$SeanPenalber" target="_blank" rel="noopener" class="taoc-payment-btn cashapp">
+                <span>Cash App</span>
+              </a>
+              <div class="taoc-payment-btn cash" title="In-person payment">
+                <span>Cash</span>
+              </div>
+            </div>
+
+            <div class="taoc-gift-callout">
+              <span class="taoc-gift-icon">🎁</span>
+              <div>
+                <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 2px;">Surprise Gift Included!</div>
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">All card purchases come with a surprise collectible gift from the studio archive.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     `;
 
     initScrollObserver();
@@ -726,7 +1123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `}
 
         <div class="book-nav-center">
-          <h1 class="book-header-title">TAOC — ${batch.title}</h1>
+          <h1 class="book-header-title">@TheArtOfCeilings — ${batch.title}</h1>
           <span class="book-header-subtitle">Images ${batch.startIndex}–${batch.endIndex} • ${batch.imageCount} Photographs</span>
         </div>
 
@@ -776,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="page-card taoc-page-card ${isSold ? 'taoc-sold-card' : ''}" data-page-index="${index}" tabindex="0" role="button" aria-label="View ${page.filename}">
                 <div class="page-placeholder-box" style="aspect-ratio: 3 / 4;">
                   <div class="page-img-wrapper">
-                    <img src="${resolvedSrc}" alt="TAOC Image ${page.imageNumber}" class="page-real-img" loading="lazy" onload="this.parentElement.classList.add('loaded')">
+                    <img src="${resolvedSrc}" alt="@TheArtOfCeilings Image ${page.imageNumber}" class="page-real-img" loading="lazy" onload="this.parentElement.classList.add('loaded')">
                   </div>
                   <span class="page-filename-tag">${page.filename}</span>
                   <div class="page-fullres-overlay">

@@ -182,6 +182,16 @@ window.PageRenderer = {
    * Generates SVG for Podcast Cover Art
    */
   createPodcastCoverSvg(podcast) {
+    if (podcast.coverArtUrl) {
+      const resolvedCover = window.APP_CONFIG ? window.APP_CONFIG.resolveMediaUrl(podcast.coverArtUrl) : podcast.coverArtUrl;
+      const localCover = encodeURI(podcast.coverArtUrl);
+      return `
+        <div class="podcast-cover-img-box">
+          <img src="${resolvedCover}" alt="${podcast.podcastName} Cover" class="podcast-cover-real-img" loading="lazy" onerror="if(this.src!=='${localCover}'){this.src='${localCover}';}">
+        </div>
+      `;
+    }
+
     const palette = podcast.palette || { primary: "#10b981", secondary: "#059669", accent: "#6ee7b7" };
     const width = 500;
     const height = 500; // Square cover art
