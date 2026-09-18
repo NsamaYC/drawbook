@@ -29,6 +29,9 @@ aws s3 sync . "s3://$BucketName" `
     --include "book*/*.jpg" `
     --include "book*/*.png" `
     --include "book*/*.PNG" `
+    --include "theartofceilings/*" `
+    --include "Supporters/*" `
+    --include "Podcasts/*" `
     --cache-control "max-age=31536000, public"
 
 if ($LASTEXITCODE -eq 0) {
