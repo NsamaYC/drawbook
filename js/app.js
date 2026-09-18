@@ -885,52 +885,71 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSupportersPage() {
     const supporterColumns = [
       [
-        { name: "Sean Penalber", tier: "Founder & Artist" },
-        { name: "Whodathunk Band", tier: "Creative Partner" },
-        { name: "The School of Funk", tier: "Cultural Partner" },
-        { name: "Bob Morrissey", tier: "Visionary Patron" },
-        { name: "Qasim Ali", tier: "Founding Patron" },
-        { name: "Francois Pointeau", tier: "Master Patron" },
-        { name: "Anastasia Kirages", tier: "Key Contributor" },
-        { name: "Wesley Demaree", tier: "Founding Supporter" },
-        { name: "Meredith Nudo", tier: "Sustaining Patron" },
-        { name: "Vee Ramos", tier: "Arts Advocate" }
+        "Wayne, Debbie, & Jeff Penalber",
+        "Stephanie Hettrick",
+        "Karren Lovelady (In Dedication To Lezlie Whitehead)",
+        "Jeremiah Carroll (In Dedication To Debbie Combs)",
+        "Daniel Herman (In Dedication To Claudia Osorio)",
+        "Kaleigh Treiber",
+        "Dean Atkinson",
+        "Jamel Booth",
+        "Traci Lavois Thiebaud",
+        "Paul Murray",
+        "ShatteredPulse",
+        "Kalen Rowe",
+        "Schetauna Powell",
+        "Anastasia Kirages",
+        "Meredith Nudo"
       ],
       [
-        { name: "Rahul Rao", tier: "Arts Benefactor" },
-        { name: "Nisha Crossley", tier: "Honorary Patron" },
-        { name: "Alyssia Dieringer", tier: "Creative Sponsor" },
-        { name: "Beth Alder", tier: "Creative Sponsor" },
-        { name: "Nick Palermo", tier: "Patron of Sound" },
-        { name: "Cody Miears", tier: "Gallery Patron" },
-        { name: "Scott White", tier: "Studio Supporter" },
-        { name: "Bryce Levi Perkins", tier: "Sustaining Patron" },
-        { name: "Ku Egenti", tier: "Arts Champion" },
-        { name: "Mad Whit", tier: "Cultural Benefactor" }
+        "Erika Waldorf",
+        "Karina Brisack",
+        "Ross Gayler",
+        "ComedySportz Houston",
+        "Dustin Blanton",
+        "Tammie Tse",
+        "Brittany Morton",
+        "Krystal Kremer",
+        "Stephen \"Last Minute\" Bennett",
+        "Rhonda Morgan",
+        "Anonymous",
+        "Anonymous",
+        "Brian Metz",
+        "Alicia Whitmire",
+        "Chris Saenz"
       ],
       [
-        { name: "Nathaniel Potts-Wells", tier: "Creative Patron" },
-        { name: "Nkechi Chibueze", tier: "Honorary Sponsor" },
-        { name: "Schetauna Powell", tier: "Patron of the Arts" },
-        { name: "Jacob Calle", tier: "Explorer Patron" },
-        { name: "Mark Hurtado", tier: "Sound Patron" },
-        { name: "Elena Rostova", tier: "Archival Patron" },
-        { name: "Marcus Vance", tier: "Collector" },
-        { name: "Camila Torres", tier: "Gallery Friend" },
-        { name: "Julian Sterling", tier: "Sustaining Patron" },
-        { name: "Amara Osei", tier: "Arts Benefactor" }
+        "Teresa Minervini-King",
+        "Kristi Wallington",
+        "Evy Brown",
+        "Sean Billings",
+        "Alexander Harding",
+        "Travis Dahringer",
+        "Jackie Bayes",
+        "Wednesday Harrell",
+        "Zachary D Salcich",
+        "Haley Schulz",
+        "Steven Saltsman",
+        "Tiffany Chow",
+        "Christy & Doug Delony",
+        "Belinda Lalwani",
+        "Deidre Helen"
       ],
       [
-        { name: "Siddharth Mehta", tier: "Digital Archivist" },
-        { name: "Leila Chen", tier: "Patron" },
-        { name: "Darius Thorne", tier: "Honorary Supporter" },
-        { name: "Zoe Katsaros", tier: "Creative Sponsor" },
-        { name: "Trevor Vance", tier: "Founding Contributor" },
-        { name: "Haruto Takahashi", tier: "International Patron" },
-        { name: "Miriam Al-Mansoor", tier: "Gallery Patron" },
-        { name: "Felix Beaulieu", tier: "Collector" },
-        { name: "Seraphina Cruz", tier: "Arts Advocate" },
-        { name: "David M. Keller", tier: "Sustaining Patron" }
+        "John Rassenfoss",
+        "Eric Caroffino",
+        "Vinh Hoang",
+        "Sarah Tapp",
+        "Sean McClanahan",
+        "Amy Woods",
+        "James Vo",
+        "Ryan Prather",
+        "Daniel Holiday",
+        "Nadia Al-Khalifah",
+        "Tricia Grace",
+        "Greg Cote",
+        "Matt & Taylor Jackson",
+        "Anthony Nieto"
       ]
     ];
 
@@ -940,7 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <header class="supporters-hero-header">
           <h1 class="supporters-title">OUR SUPPORTERS</h1>
-          <p class="supporters-subtitle">With profound gratitude to the patrons, collectors, collaborators, and friends who champion independent art, publishing, and sonic storytelling.</p>
+          <p class="supporters-subtitle">With profound gratitude to the patrons, friends, and supporters who champion independent art, publishing, and sonic storytelling.</p>
         </header>
 
         <div class="supporters-marquee-container" aria-label="Supporters marquee list">
@@ -948,10 +967,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const duplicated = [...col, ...col, ...col];
             return `
               <div class="marquee-column marquee-col-${cIdx + 1}">
-                ${duplicated.map(sup => `
+                ${duplicated.map(name => `
                   <div class="supporter-item">
-                    <span class="supporter-name">${escapeHtml(sup.name)}</span>
-                    <span class="supporter-tier">${escapeHtml(sup.tier)}</span>
+                    <span class="supporter-name">${escapeHtml(name)}</span>
                   </div>
                 `).join('')}
               </div>
