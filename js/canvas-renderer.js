@@ -129,11 +129,10 @@ window.PageRenderer = {
         <rect x="30" y="40" width="240" height="320" rx="8" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.25"/>
         <rect x="0" y="0" width="14" height="100%" fill="#ffffff" opacity="0.2" />
 
-        <g transform="translate(150, 180)">
-          <rect x="-100" y="-45" width="200" height="90" rx="10" fill="rgba(0,0,0,0.4)" backdrop-filter="blur(4px)"/>
-          <text x="0" y="-10" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="800" font-family="sans-serif">${book.title.toUpperCase()}</text>
-          <text x="0" y="15" text-anchor="middle" fill="${palette.accent}" font-size="12" font-weight="600" font-family="sans-serif" letter-spacing="2">${book.genre.toUpperCase()}</text>
-          <text x="0" y="32" text-anchor="middle" fill="#ffffff" font-size="11" opacity="0.8" font-family="sans-serif">${book.pageCount} PAGES</text>
+        <g transform="translate(150, 185)">
+          <rect x="-100" y="-40" width="200" height="80" rx="10" fill="rgba(0,0,0,0.4)" backdrop-filter="blur(4px)"/>
+          <text x="0" y="-5" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="800" font-family="sans-serif">${book.title.toUpperCase()}</text>
+          <text x="0" y="20" text-anchor="middle" fill="#ffffff" font-size="12" opacity="0.85" font-family="sans-serif">${book.pageCount} PAGES</text>
         </g>
 
         <text x="150" y="375" text-anchor="middle" fill="#ffffff" font-size="10" font-family="monospace" opacity="0.7">REF: BOOK-${book.id.toString().padStart(2, '0')}</text>

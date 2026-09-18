@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         opt.textContent = `${book.title} (Needs Google Drive Share)`;
         opt.disabled = true;
       } else {
-        opt.textContent = `${book.title} (${book.genre})`;
+        opt.textContent = `${book.title} (${book.pageCount} Pages)`;
       }
       jumpSelect.appendChild(opt);
     });
@@ -272,11 +272,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderLibraryIndex() {
     const filteredBooks = state.books.filter(book => {
-      const matchesSearch = book.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-                            book.genre.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
-                            `book-${book.id}`.includes(state.searchQuery.toLowerCase());
-      const matchesGenre = state.selectedGenre === 'ALL' || book.genre === state.selectedGenre;
-      return matchesSearch && matchesGenre;
+      return book.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+             `book-${book.id}`.includes(state.searchQuery.toLowerCase()) ||
+             `${book.id}` === state.searchQuery.trim();
     });
 
     const totalBooksCount = state.books.length;
@@ -284,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainContent.innerHTML = `
       <section class="library-hero">
         <h1 class="library-title">Digital Book & Photo Gallery</h1>
-        <p class="library-subtitle">Browse all ${totalBooksCount} high-resolution sequential art books, sketchbooks, and codex volumes.</p>
+        <p class="library-subtitle">Browse all ${totalBooksCount} high-resolution sequential art books and sketchbooks.</p>
       </section>
 
       <div class="toolbar-container">
@@ -292,14 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
-          <input type="text" id="library-search" class="search-input" placeholder="Search book 1-${totalBooksCount}, genre..." value="${escapeHtml(state.searchQuery)}" aria-label="Search books">
-        </div>
-
-        <div class="filter-group">
-          <button class="filter-chip ${state.selectedGenre === 'ALL' ? 'active' : ''}" data-genre="ALL">All (${totalBooksCount})</button>
-          <button class="filter-chip ${state.selectedGenre === 'Concept Art' ? 'active' : ''}" data-genre="Concept Art">Concept Art</button>
-          <button class="filter-chip ${state.selectedGenre === 'Sketchbook' ? 'active' : ''}" data-genre="Sketchbook">Sketchbook</button>
-          <button class="filter-chip ${state.selectedGenre === 'Graphic Novel' ? 'active' : ''}" data-genre="Graphic Novel">Graphic Novel</button>
+          <input type="text" id="library-search" class="search-input" placeholder="Search by book number (e.g. 1-${totalBooksCount})..." value="${escapeHtml(state.searchQuery)}" aria-label="Search books">
         </div>
       </div>
 
@@ -330,8 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
               <div class="book-card-info">
                 <h2 class="book-card-title">${book.title}</h2>
                 <div class="book-card-meta">
-                  <span>${book.genre}</span>
-                  <span>${book.pageCount} Pages</span>
+                  <span class="book-card-page-count">${book.pageCount} Pages</span>
                 </div>
               </div>
             </a>
@@ -356,21 +346,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const searchInput = document.getElementById('library-search');
-    searchInput.addEventListener('input', (e) => {
-      state.searchQuery = e.target.value;
-      renderLibraryIndex();
-      const newInput = document.getElementById('library-search');
-      newInput.focus();
-      newInput.setSelectionRange(newInput.value.length, newInput.value.length);
-    });
-
-    const filterChips = document.querySelectorAll('.filter-chip');
-    filterChips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        state.selectedGenre = chip.getAttribute('data-genre');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value;
         renderLibraryIndex();
+        const newInput = document.getElementById('library-search');
+        if (newInput) {
+          newInput.focus();
+          newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+        }
       });
-    });
+    }
 
     initScrollObserver();
   }
@@ -397,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div class="book-nav-center">
           <h1 class="book-header-title">book ${book.id}</h1>
-          <span class="book-header-subtitle">${book.genre} • ${book.pageCount} High-Res Pages</span>
+          <span class="book-header-subtitle">${book.pageCount} High-Res Pages</span>
         </div>
 
         ${nextId ? `
@@ -1263,13 +1249,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLightboxContent();
     lightboxModal.classList.remove('hidden');
     lightboxModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('lightbox-open');
   }
 
   function closeLightbox() {
     lightboxModal.classList.add('hidden');
     lightboxModal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    document.body.classList.remove('lightbox-open');
   }
 
   function updateLightboxContent() {
